@@ -34,6 +34,14 @@
   "author": "Google LLC",
   "license": "BSD-3-Clause",
   "dependencies": {
+    "@polymer/iron-icons": "^3.0.1",
+    "@polymer/paper-dialog": "^3.0.1",
+    "@polymer/paper-dialog-behavior": "^3.0.1",
+    "@polymer/paper-item": "^3.0.1",
+    "@polymer/paper-listbox": "^3.0.1",
+    "@vaadin/vaadin-button": "^2.4.0",
+    "@vaadin/vaadin-dialog": "^2.5.2",
+    "date-fns": "^2.21.3",
     "lit": "^2.0.0-rc.1",
     "lit-element": "^3.0.0-rc.1"
   },
