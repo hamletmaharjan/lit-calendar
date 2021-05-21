@@ -5,9 +5,9 @@
  */
 
 //  import {format} from 'date-fns';
-import {LitElement, html, css, render, nothing} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
 import {format, formatISO, addHours} from 'date-fns';
+import {customElement, property} from 'lit/decorators.js';
+import {LitElement, html, css, render, nothing} from 'lit';
 
 import '@vaadin/vaadin-dialog';
 import '@vaadin/vaadin-button';
@@ -105,10 +105,24 @@ export class AppAddEvent extends LitElement {
       */
       dateFormat: {type: String},
 
+      /**
+       * holds title of the event to be added
+       */
       title: {type: String},
-      startDate: {type: String},
+
+      /**
+       * handler function on submit event add
+       */
       onSubmitData: {type: Function},
+
+      /**
+       * day on which event to be added
+       */
       day: {type: Object},
+
+      /**
+       * handler functin to hide this component
+       */
       onHideAddEvent: {type: Function}
 
     };
@@ -138,9 +152,7 @@ export class AppAddEvent extends LitElement {
   handleAdd() {
     this.onSubmitData({title:this.title?this.title:'untitled', start: formatISO(this.day)});
     this.title = '';
-  }
-
-  
+  }  
 
   renderTemplate() {
     return html`
@@ -165,7 +177,6 @@ export class AppAddEvent extends LitElement {
   }
 
   dialogRenderer(root, dialog) {
-    console.log('title', this.title);
     const innerHTML = html`
       <div class="header">
         <h3 class="title" style="margin:0">Add an Event</h3>

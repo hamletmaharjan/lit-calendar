@@ -204,7 +204,6 @@ export class AppCalendarCell extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.shadowRoot.addEventListener('dblclick', (e)=> {
-      console.log('dblcli');
       this.onAddEvent(this.day);
     });
   }

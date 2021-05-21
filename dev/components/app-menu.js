@@ -105,15 +105,19 @@ export class AppMenu extends LitElement {
       positions: {type: Object},
 
       /**
-       * Boolean to decide whether to show menu component or not
-       *
-       * @type {{hidden : Boolean}}
+       * handler function to hide this component
        */
-       hidden: {type: Boolean},
-       onCancel: {type: Function},
+      onCancel: {type: Function},
 
-       day: {type: Object},
-       showAppMenu: {type: Boolean}
+      /**
+       * object to store date on which popup events list is shown
+       */
+      day: {type: Object},
+
+      /**
+       * to check where to show this component or not
+       */
+      showAppMenu: {type: Boolean}
       
     };
   }
@@ -169,7 +173,6 @@ export class AppMenu extends LitElement {
     let filteredEvents = this.items.filter(eventItem => {
       return isSameDay(new Date(eventItem.start), this.day);
     });
-    console.log('render menu');
     return this.showAppMenu? html`
       <div class="listbox" style=${styleMap(this.positions)}>
         <div class="list-heading">
