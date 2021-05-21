@@ -8,12 +8,11 @@ import {LitElement, html, css, nothing} from 'lit';
 import {addMonths, subMonths, isAfter, isBefore, isSameDay, formatISO} from 'date-fns';
 
 import './components/app-menu';
+import './components/app-add-event';
 import './components/app-calendar-header';
 import './components/app-calendar-cell.js';
 import './components/app-calendar-content.js';
 import './components/app-calendar-content-header.js';
-
-import './components/app-add-event';
 
 
 /**
@@ -84,11 +83,29 @@ export class AppCalendar extends LitElement {
        */
       events: {type:Array},
 
+      /**
+       * boolean that check whether to show popup event list
+       */
       showAppMenu: {type: Boolean},
+
+      /**
+       * object that holds the date on which user creates an event
+       */
       testDate: {type: Object},
 
+      /**
+       * boolean to show or hide add event dialog
+       */
       showAddEvent: {type:Boolean},
+
+      /**
+       * object to hold the date on which to display popup event list
+       */
       day: {type: Object},
+
+      /**
+       * holds top and left position of popu event list
+       */
       appMenuPositions: {type: Object}
     };
   }
@@ -116,6 +133,7 @@ export class AppCalendar extends LitElement {
       {"id":8, "start":"2021-05-18T06:00:00.000Z","end":"2021-05-18T07:00:00.000Z","title":"Team Meeting"},
       {"id":9, "start":"2021-05-17T06:00:00.000Z","end":"2021-05-17T07:00:00.000Z","title":"some Meeting"}
     ];
+
     this.nextMonth = this.nextMonth.bind(this);
     this.prevMonth = this.prevMonth.bind(this);
     this.handleShowAppMenu = this.handleShowAppMenu.bind(this);
@@ -134,10 +152,8 @@ export class AppCalendar extends LitElement {
       if(e.target!=this.menu && this.showAppMenu){
         this.counter++;
         if(this.counter>1){
-          console.log('shown', this.showAppMenu, e.target);
           this.handleCancel();
         }
-        
       }
     });
   }
@@ -154,6 +170,46 @@ export class AppCalendar extends LitElement {
     this.currentMonth = subMonths(this.currentMonth, 1);
   }
 
+  handleShowAppMenu(e, items, day, pos) {
+    this.showAppMenu = true;
+    this.testDate = day;
+    this.appMenuPositions = pos;
+    this.counter = 0;
+  }
+
+  handleCancel() {
+    this.showAppMenu = false;
+  }
+
+  handleChangeEvent(id,start) {
+    this.events = this.events.map((item) => {
+      if(item['id'] == id) {
+        item.start = start;
+      } 
+      return {...item}
+    });
+  }
+
+  handleAddEvent(day) {
+    this.showAddEvent = true;
+    this.day = day;
+  }
+
+  handleHideAddEvent() {
+    this.showAddEvent = false;
+  }
+
+  handleSubmitEventData(data) {
+    data.id = this.events.length+1;
+    this.events = [...this.events, data];
+    this.showAddEvent = false;
+  }
+
+  // disconnectedCallback() {
+  //   super.disconnectedCallback();
+
+  // }
+
   /**
    * render method
    * 
@@ -161,7 +217,6 @@ export class AppCalendar extends LitElement {
    */
   render() {
     console.log('render');
-    // console.log(isSameDay(new Date(this.events[0].start), this.currentMonth), this.currentMonth);
     return html`
       <div class="calendar">
         <app-calendar-header 
@@ -193,50 +248,7 @@ export class AppCalendar extends LitElement {
     `;
   }
 
-  handleShowAppMenu(e, items, day, pos) {
-    this.showAppMenu = true;
-    this.testDate = day;
-    this.appMenuPositions = pos;
-    this.counter = 0;
-  }
-
-  handleCancel() {
-    console.log('cancel')
-    // this.menu.hidden = true;
-    this.showAppMenu = false;
-  }
-
-  handleChangeEvent(id,start) {
-    // console.log(id, start);
-    this.events = this.events.map((item) => {
-      if(item['id'] == id) {
-        item.start = start;
-      } 
-      return {...item}
-    });
-  }
-
-  handleAddEvent(day) {
-    this.showAddEvent = true;
-    this.day = day;
-  }
-
-  handleHideAddEvent() {
-    this.showAddEvent = false;
-  }
-
-  handleSubmitEventData(data) {
-    console.log(data);
-    data.id = this.events.length+1;
-    this.events = [...this.events, data];
-    this.showAddEvent = false;
-    // this.eventDialog.hideAddEvent();
-  }
-
-  // disconnectedCallback() {
-  //   super.disconnectedCallback();
-
-  // }
+  
 
 }
  

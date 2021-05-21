@@ -38,10 +38,24 @@ export class AppCalendarContent extends LitElement {
        */
       selectedDate: {type:Object},
 
+      /**
+       * array to hold event passed from parent and pass it down
+       */
       events: {type:Array},
 
+      /**
+       * handler function that triggers when user click on more events option
+       */
       onMoreMenuClick: {type: Function},
+
+      /**
+       * handler function when event changes on drag
+       */
       onEventChange: {type: Function},
+
+      /**
+       * handler function when user adds event
+       */
       onAddEvent: {type: Function}
     };
   }

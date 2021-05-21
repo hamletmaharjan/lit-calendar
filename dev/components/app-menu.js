@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import {LitElement, html, css, nothing} from 'lit';
 import {format, isSameDay} from 'date-fns';
+import {LitElement, html, css, nothing} from 'lit';
 import { styleMap } from 'lit/directives/style-map';
 
 import '@polymer/paper-item/paper-item.js';

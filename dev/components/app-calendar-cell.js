@@ -157,18 +157,41 @@ export class AppCalendarCell extends LitElement {
        */
       monthStart: {type:Object},
 
+      /**
+       * holds all the events
+       */
       events: {type:Array},
 
+      /**
+       * handler function to show app menu
+       */
       showAppMenu: {type: Boolean},
 
+      /**
+       * handler function when more is clicked
+       */
       onMoreMenuClick: {type: Function},
 
+      /**
+       * boolean to check if there are more than two event on a day
+       */
       hasMore: {type: Boolean},
+
+      /**
+       * handler function when event is changed on drag n drop
+       */
       onEventChange: {type: Function},
+
+      /**
+       * handler function when user adds an event
+       */
       onAddEvent: {type: Function}
     };
   }
 
+  /**
+   * constructor
+   */
   constructor() {
     super();
 
@@ -189,7 +212,6 @@ export class AppCalendarCell extends LitElement {
   handleMoreClick(e) {
     this.showAppMenu = true;
     let rect = this.shadowRoot.querySelector('#test').getBoundingClientRect();
-    // console.log(rect);
     let filteredEvents = this.events.filter(eventItem => {
       return isSameDay(new Date(eventItem.start), this.day);
     });
@@ -202,18 +224,11 @@ export class AppCalendarCell extends LitElement {
     let draggableItems = this.shadowRoot.querySelectorAll('.event');
     if(draggableItems.length!=0){
       draggableItems.forEach(draggableItem => {
-        // console.log(draggableItem.getAttribute('key'));
-        // console.log(this.shadowRoot);
         draggableItem.addEventListener('dragstart', (e)=>{ this.handleDragStart(e, draggableItem.getAttribute('key'))})
       });
     }
     this.addEventListener('dragover', this.handleDragOver);
     this.addEventListener('drop', this.handleDrop);
-    // console.log()
-    // if(this.showAppMenu) {
-    //   console.log('handlemoreclick');
-    //   this.handleMoreClick('ev');
-    // }
   }
 
   handleDragOver(e) {
@@ -224,14 +239,12 @@ export class AppCalendarCell extends LitElement {
   handleDrop(e) {
     e.dataTransfer.effectAllowed = "move";
     let id = e.dataTransfer.getData('text/plain');
-    console.log('drop', e.dataTransfer.getData('text/plain'));
     this.onEventChange(id, formatISO(this.day));
   }
 
   handleDragStart(e, key) {
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData("text/plain", key);
-    console.log('dragging ', key);
   }
 
   renderEventsTemplate() {

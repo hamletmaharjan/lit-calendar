@@ -128,6 +128,18 @@ export class AppAddEvent extends LitElement {
     this.handleAdd = this.handleAdd.bind(this);
   }
 
+  handleInputChange(e) {
+    let name = e.target.name;
+    let val = e.target.value;
+    this[name] = val;
+
+  }
+
+  handleAdd() {
+    this.onSubmitData({title:this.title?this.title:'untitled', start: formatISO(this.day)});
+    this.title = '';
+  }
+
   
 
   renderTemplate() {
@@ -172,20 +184,6 @@ export class AppAddEvent extends LitElement {
     // console.log('here',root, dialog);
   }  
 
-  handleInputChange(e) {
-    console.log('c')
-    let name = e.target.name;
-    let val = e.target.value;
-    this[name] = val;
-
-  }
-
-  handleAdd() {
-    // console.log( this.day)
-    
-    this.onSubmitData({title:this.title?this.title:'untitled', start: formatISO(this.day)});
-    this.title = '';
-  }
 
 }
 
