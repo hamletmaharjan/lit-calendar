@@ -95,26 +95,31 @@ export class AppAddEvent extends LitElement {
     return {
       /**
       * holds the format of the date
+      * @type {{dateFormat:String}}
       */
       dateFormat: {type: String},
 
       /**
        * holds title of the event to be added
+       * @type {{title:String}}
        */
       title: {type: String},
 
       /**
        * handler function on submit event add
+       * @type {{onSubmitData: Function}}
        */
       onSubmitData: {type: Function},
 
       /**
        * day on which event to be added
+       * @type {{day:Object}}
        */
       day: {type: Object},
 
       /**
        * handler functin to hide this component
+       * @type {{onHideAddEvent:Function}}
        */
       onHideAddEvent: {type: Function}
 
@@ -127,45 +132,61 @@ export class AppAddEvent extends LitElement {
   constructor() {
     super();
 
-    this.dateFormat = "MMMM yyyy";
     this.title = '';
+    this.endTime = '';
     this.startTime = '';
+    this.dateFormat = "MMMM yyyy";
 
+    this.handleAdd = this.handleAdd.bind(this);
     this.dialogRenderer = this.dialogRenderer.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleAdd = this.handleAdd.bind(this);
   }
 
-  handleInputChange(e) {
-    let name = e.target.name;
-    let val = e.target.value;
-    this[name] = val;
-    console.log(val)
-
+  /**
+   * handler function when input changes
+   * @param {Object} event 
+   */
+  handleInputChange(event) {
+    if(event.target.name && event.target.value){
+      let name = event.target.name;
+      let val = event.target.value;
+      this[name] = val;
+    }
   }
 
+  /**
+   * handler function when add button is clicked
+   */
   handleAdd() {
-    let startTime = "12:00";
-    let endTime = "13:00";
-    this.onSubmitData({title:this.title?this.title:'untitled', start: formatISO(this.day), startTime:startTime,
-      endTime:endTime
+    if(this.startTime.length == 0) {
+      this.startTime = '12:00';
+    }
+    if(this.endTime.length == 0) {
+      this.endTime = '13:00';
+    }
+    this.onSubmitData({title:this.title?this.title:'untitled', start: formatISO(this.day), startTime:this.startTime,
+      endTime:this.endTime
     });
-    this.title = '';
+    [this.title, this.startTime, this.endTime] = ['','',''];
   }  
 
+  /**
+   * custom template to be rendered
+   * @returns {html}
+   */
   renderTemplate() {
     return html`
     <label>Time</label><br>
     <input type="time" @input="${this.handleInputChange}" name="startDate"> - <input type="time" @input="${this.handleInputChange}"> <br>
     `
   }
+
   /**
   * render method
   * 
   * @returns {customElements}
   */
   render() {
-    // console.log(this.title)
     return html`<vaadin-dialog
       no-close-on-esc no-close-on-outside-click
       opened
@@ -175,6 +196,11 @@ export class AppAddEvent extends LitElement {
      
   }
 
+  /**
+   * renderer function that returns html to be displayed on dialog
+   * @param {Object} root 
+   * @param {Object} dialog 
+   */
   dialogRenderer(root, dialog) {
     const innerHTML = html`
       <div class="header">
@@ -192,7 +218,6 @@ export class AppAddEvent extends LitElement {
       </div>
     `;
     render(innerHTML, root);
-    // console.log('here',root, dialog);
   }  
 
 

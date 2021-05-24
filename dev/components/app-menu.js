@@ -92,34 +92,40 @@ export class AppMenu extends LitElement {
     return {
       /**
       * holds formatted date in number format
+      * @type {{items:Array}}
       */
       items: {type: Array},
 
       /**
        * Object that defines where to position the component with css with left and top value
-       *
        * @type {{positions : Object}}
        */
       positions: {type: Object},
 
       /**
        * handler function to hide this component
+       * @type {{onCancel:Function}}
        */
       onCancel: {type: Function},
 
       /**
        * object to store date on which popup events list is shown
+       * @type {{day:Object}}
        */
       day: {type: Object},
 
       /**
        * to check where to show this component or not
+       * @type {{showAppMenu:Boolean}}
        */
       showAppMenu: {type: Boolean}
       
     };
   }
 
+  /**
+   * constructor
+   */
   constructor() {
     super();
 
@@ -127,6 +133,9 @@ export class AppMenu extends LitElement {
     this.positions = {top:'10px', left: '10px'};
   }
 
+  /**
+   * function to add drag and drop events 
+   */
   updated() {
     let draggableItems = this.shadowRoot.querySelectorAll('.list-item');
     if(draggableItems.length!=0){
@@ -137,23 +146,32 @@ export class AppMenu extends LitElement {
     this.addEventListener('dragend', this.handleDragLeave);
   }
 
-  handleDragLeave(e) {
+  /**
+   * 
+   * @param {Object} event
+   */
+  handleDragLeave(event) {
     console.log('end');
-    // this.requestUpdate();
   }
 
-  handleDragStart(e, key) {
-    console.log('dragging list');
+  /**
+   * handler for drag start
+   * @param {Object} event 
+   * @param {Integer} key 
+   */
+  handleDragStart(event, key) {
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData("text/plain", key);
-    // console.log('dragging ', key);
   }
 
+  /**
+   * template to be rendered
+   * @returns html
+   */
   renderTemplate() {
-    
     return  html`
-    <p>something</p>
-      <paper-listbox class="list">
+      <p>something</p>
+        <paper-listbox class="list">
         ${this.items.map(({...item}) => {
           return html`<paper-item>${item.title}</paper-item>`;
         })}
@@ -161,6 +179,11 @@ export class AppMenu extends LitElement {
     `;
   }
 
+  /**
+   * function to convert 24hr time to 12hr
+   * @param {String} time 
+   * @returns String
+   */
   tConvert(time) {
     // Check correct time format and split into components
     time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
@@ -207,4 +230,3 @@ export class AppMenu extends LitElement {
 }
 
 window.customElements.define('app-menu', AppMenu);
- 

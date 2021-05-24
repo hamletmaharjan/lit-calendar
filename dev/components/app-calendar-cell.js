@@ -138,51 +138,61 @@ export class AppCalendarCell extends LitElement {
     return {
       /**
        * holds formatted date in number format
+       * @type {{formattedDate:String}}
        */
       formattedDate: {type: String},
 
       /**
        * holds the current date
+       * @type {{selectedDate:Object}}
        */
       selectedDate: {type: Object},
 
       /**
        * holds the date for the current cell
+       * @type {{day:Object}}
        */
       day: {type: Object},
 
       /**
        * holds the start of the current month
+       * @type {{monthStart:Object}}
        */
       monthStart: {type:Object},
 
       /**
        * holds all the events
+       * @type {{events:Array}}
        */
       events: {type:Array},
 
       /**
        * handler function to show app menu
+       * @type {{showAppMenu:Boolean}}
        */
       showAppMenu: {type: Boolean},
 
       /**
        * handler function when more is clicked
+       * @type {{onMoreMenuClick:Function}}
        */
       onMoreMenuClick: {type: Function},
 
       /**
        * boolean to check if there are more than two event on a day
+       * @type {{hasMore:Boolean}}
        */
       hasMore: {type: Boolean},
 
       /**
        * handler function when event is changed on drag n drop
+       * @type {{onEventChange:Function}}
        */
       onEventChange: {type: Function},
 
       /**
        * handler function when user adds an event
+       * @type {{onAddEvent:Function}}
        */
       onAddEvent: {type: Function}
     };
@@ -196,29 +206,36 @@ export class AppCalendarCell extends LitElement {
 
     this.hasMore = false;
     this.showAppMenu = false;
-
-    this.handleCancel = this.handleCancel.bind(this);
   }
 
+  /**
+   * to add doubleclick listener for adding event dialog
+   */
   connectedCallback() {
     super.connectedCallback();
-    this.shadowRoot.addEventListener('dblclick', (e)=> {
+
+    this.shadowRoot.addEventListener('dblclick', (event)=> {
       this.onAddEvent(this.day);
     });
   }
 
-  handleMoreClick(e) {
+  /**
+   * handler function when more list option is clicked
+   * @param {Object} event 
+   */
+  handleMoreClick(event) {
     this.showAppMenu = true;
     let rect = this.shadowRoot.querySelector('#test').getBoundingClientRect();
     let filteredEvents = this.events.filter(eventItem => {
       return isSameDay(new Date(eventItem.start), this.day);
     });
-    // filteredEvents.splice(0,2);
-    this.onMoreMenuClick(e, filteredEvents, this.day, {left: rect.x-5 + 'px', top: rect.y-5 + 'px'});
+    this.onMoreMenuClick(event, filteredEvents, this.day, {left: rect.x-5 + 'px', top: rect.y-5 + 'px'});
   }
 
+  /**
+   * function to get all the events to add drag and drop events listeners
+   */
   updated() {
-    // console.log(this.showAppMenu);
     let draggableItems = this.shadowRoot.querySelectorAll('.event');
     if(draggableItems.length!=0){
       draggableItems.forEach(draggableItem => {
@@ -229,23 +246,38 @@ export class AppCalendarCell extends LitElement {
     this.addEventListener('drop', this.handleDrop);
   }
 
+  /**
+   * handler function for drag over event
+   * @param {Object} e 
+   */
   handleDragOver(e) {
     e.preventDefault(); // Necessary. Allows us to drop.
-    // console.log('dragged over');
   }
 
+  /**
+   * handler function for handling drop
+   * @param {Object} e 
+   */
   handleDrop(e) {
     e.dataTransfer.effectAllowed = "move";
     let id = e.dataTransfer.getData('text/plain');
-    // this.onEventChange(id, formatISO(this.day));
     this.onEventChange(id, format(this.day,'yyyy-MM-dd'))
   }
 
+  /**
+   * 
+   * @param {Object} e 
+   * @param {Integer} key - key that represents id of event
+   */
   handleDragStart(e, key) {
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData("text/plain", key);
   }
 
+  /**
+   * template to be rendered
+   * @returns html
+   */
   renderEventsTemplate() {
     let allEvents = [];
     let count = 0;
@@ -282,7 +314,11 @@ export class AppCalendarCell extends LitElement {
     return allEvents;
   }
 
-
+  /**
+   * function to convert time in 24 hr format to 12 hr format
+   * @param {String} time 
+   * @returns String
+   */
   tConvert(time) {
     // Check correct time format and split into components
     time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
@@ -295,22 +331,6 @@ export class AppCalendarCell extends LitElement {
     return time.join(''); // return adjusted time or original string
   }
 
-  handleMore() {
-    this.showAppMenu = true;
-  }
-
-  renderMoreTemplate() {
-    let filteredEvents = this.events.filter(eventItem => {
-      return isSameDay(new Date(eventItem.start), this.day);
-    });
-    // filteredEvents.splice(0,2);
-    console.log(filteredEvents);
-    return html`<app-menu .items="${filteredEvents}" .onCancel="${this.handleCancel}" .day="${this.day}"></app-menu>`
-  }
-
-  handleCancel() {
-    this.showAppMenu = false;
-  }
 
   /**
    * render method

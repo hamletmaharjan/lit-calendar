@@ -91,11 +91,13 @@ export class AppCalendarContentHeader extends LitElement {
     return {
       /**
        * holds the format of the date
+       * @type {{dateFormat:String}}
        */
       dateFormat: {type: String},
 
       /**
        * holds the current date to represent month
+       * @type {{currentMonth:Object}}
        */
       currentMonth: {type: Object}
     };

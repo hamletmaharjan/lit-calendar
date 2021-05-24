@@ -131,21 +131,25 @@ export class AppCalendarHeader extends LitElement {
     return {
       /**
        * holds the format of the date
+       * @type {{dateFormat:String}}
        */
       dateFormat: {type: String},
 
       /**
        * holds the current date to represent the month
+       * @type {{currentMonth:Object}}
        */
       currentMonth: {type: Object},
 
       /**
        * handler function for next month
+       * @type {{onNextMonthClick:Function}}
        */
       onNextMonthClick: {type: Function},
 
       /**
        * handler function for previous month
+       * @type {{onPrevMonthClick:Function}}
        */
       onPrevMonthClick: {type:Function}
       
