@@ -1,15 +1,11 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 import {LitElement, html, css, nothing} from 'lit';
+
 import {addMonths, subMonths, isAfter, isBefore, isSameDay, formatISO} from 'date-fns';
 
 import './components/app-menu';
 import './components/app-add-event';
 import './components/app-calendar-header';
+import {commonCss} from './css/globalCss';
 import './components/app-calendar-cell.js';
 import './components/app-calendar-content.js';
 import './components/app-calendar-content-header.js';
@@ -28,17 +24,10 @@ import './components/app-calendar-content-header.js';
 export class AppCalendar extends LitElement {
   /**
    * Static getter styles
-   * 
-   * @returns {styles}
    */
-  static get styles() {
-    return css`
-      /* GENERAL */
-      * {
-        box-sizing: border-box;
-        font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-      }
-      
+  static styles = [
+    commonCss,
+    css`
       :host {
         background: var(--bg-color);
         position: relative;
@@ -53,8 +42,9 @@ export class AppCalendar extends LitElement {
         background: var(--neutral-color);
         border: 1px solid var(--border-color);
       }
-    `;
-  }
+    `
+  ];
+  
 
   /**
    * Static getter properties
@@ -64,47 +54,50 @@ export class AppCalendar extends LitElement {
   static get properties() {
     return {
       /**
-        * The name to say "Hello" to.
-        */
-      name: {type: String},
-
-      /**
         * The object that holds the current date to represent current month
+        * @type {{currentMonth:Object}}
         */
       currentMonth: {type: Object},
 
       /**
         * The object that holds the current date
+        * @type {{selectedDate:Object}}
         */
       selectedDate: {type: Object},
 
       /**
        * array to hold all the events
+       * @type {{events:Array}}
        */
       events: {type:Array},
 
       /**
        * boolean that check whether to show popup event list
+       * @type {{showAppMenu:Boolean}}
        */
       showAppMenu: {type: Boolean},
 
       /**
        * object that holds the date on which user creates an event
+       * @type {{testDate:Object}}
        */
       testDate: {type: Object},
 
       /**
        * boolean to show or hide add event dialog
+       * @type {{showAddEvent:Boolean}}
        */
       showAddEvent: {type:Boolean},
 
       /**
        * object to hold the date on which to display popup event list
+       * @type {{day:Object}}
        */
       day: {type: Object},
 
       /**
        * holds top and left position of popu event list
+       * @type {{appMenuPositions:Object}}
        */
       appMenuPositions: {type: Object}
     };
@@ -118,9 +111,9 @@ export class AppCalendar extends LitElement {
 
     this.showAppMenu = false;
     this.showAddEvent = false;
+    this.testDate = new Date();
     this.currentMonth = new Date();
     this.selectedDate = new Date();
-    this.testDate = new Date();
     this.appMenuPositions = {top:'0px', left:'0px'}
     this.events = [
       {"id":1, "start":"2021-05-17","end":"2021-05-17","startTime":"12:00", "endTime":"12:00","title":"Business of Software Conference"},
@@ -136,40 +129,62 @@ export class AppCalendar extends LitElement {
 
     this.nextMonth = this.nextMonth.bind(this);
     this.prevMonth = this.prevMonth.bind(this);
-    this.handleShowAppMenu = this.handleShowAppMenu.bind(this);
+    this.clickHandler = this.clickHandler.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
-    this.handleChangeEvent = this.handleChangeEvent.bind(this);
     this.handleAddEvent = this.handleAddEvent.bind(this);
-    this.handleSubmitEventData = this.handleSubmitEventData.bind(this);
+    this.handleShowAppMenu = this.handleShowAppMenu.bind(this);
+    this.handleChangeEvent = this.handleChangeEvent.bind(this);
     this.handleHideAddEvent = this.handleHideAddEvent.bind(this);
+    this.handleSubmitEventData = this.handleSubmitEventData.bind(this);
   }
 
+  /**
+   * function to add click event listener when use click on anywhere
+   */
   connectedCallback() {
     super.connectedCallback();
+
     this.counter = 0;
-    this.shadowRoot.addEventListener('click', (e) => {
-      // console.log(e.target);
-      if(e.target!=this.menu && this.showAppMenu){
-        this.counter++;
-        if(this.counter>1){
-          this.handleCancel();
-        }
-      }
-    });
+    this.shadowRoot.addEventListener('click', this.clickHandler);
   }
 
+  clickHandler(event) {
+    if(event.target!=this.menu && this.showAppMenu){
+      this.counter++;
+      if(this.counter>1){
+        this.handleCancel();
+      }
+    }
+  }
+
+  /**
+   * function to grap app-menu when first updated
+   */
   firstUpdated() {
     this.menu = this.shadowRoot.querySelector('app-menu');
   }
 
+  /**
+   * handler function when use click the next icon to add current day by a month
+   */
   nextMonth() {
     this.currentMonth = addMonths(this.currentMonth, 1);
   }
 
+  /**
+   * handler function when use click the next icon to subtract current day by a month
+   */
   prevMonth() {
     this.currentMonth = subMonths(this.currentMonth, 1);
   }
 
+  /**
+   * Handler function to show app menu
+   * @param {Object} e - click event 
+   * @param {Array} items - items to be shown in app menu
+   * @param {Object} day - day on which to show app menu
+   * @param {Object} pos - positon of the component
+   */
   handleShowAppMenu(e, items, day, pos) {
     this.showAppMenu = true;
     this.testDate = day;
@@ -177,39 +192,66 @@ export class AppCalendar extends LitElement {
     this.counter = 0;
   }
 
+  /**
+   * handler function to cancel app menu
+   */
   handleCancel() {
     this.showAppMenu = false;
   }
 
+  /**
+   * handler function when drop event occurs on a cell
+   * @param {Integer} id - id of the event
+   * @param {String} start - new start date of the event
+   */
   handleChangeEvent(id,start) {
-    this.events = this.events.map((item) => {
-      if(item['id'] == id) {
-        item.start = start;
-      } 
-      return {...item}
-    });
-    console.log(this.events)
+    if(this.events.length!=0){
+      this.events = this.events.map((item) => {
+        if(item['id'] == id) {
+          item.start = start;
+        } 
+        return {...item}
+      });
+    }
+    else {
+      console.log('empty events list');
+    }
   }
 
+  /**
+   * 
+   * @param {Object} day - day on which add event is clicked on
+   */
   handleAddEvent(day) {
     this.showAddEvent = true;
     this.day = day;
   }
 
+  /**
+   * handler function to hide add app event dialog
+   */
   handleHideAddEvent() {
     this.showAddEvent = false;
   }
 
+  /**
+   * 
+   * @param {Object} data - data contains details for new event
+   */
   handleSubmitEventData(data) {
     data.id = this.events.length+1;
     this.events = [...this.events, data];
     this.showAddEvent = false;
   }
 
-  // disconnectedCallback() {
-  //   super.disconnectedCallback();
+  /**
+   * remove click event listener
+   */
+  disconnectedCallback() {
+    super.disconnectedCallback();
 
-  // }
+    this.shadowRoot.removeEventListener('click', this.clickHandler);
+  }
 
   /**
    * render method
@@ -248,10 +290,6 @@ export class AppCalendar extends LitElement {
         ></app-add-event>`: nothing}
     `;
   }
-
-  
-
 }
  
 window.customElements.define('app-calendar', AppCalendar);
- 

@@ -1,18 +1,13 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-//  import {format} from 'date-fns';
-import {format, formatISO, addHours} from 'date-fns';
 import {customElement, property} from 'lit/decorators.js';
 import {LitElement, html, css, render, nothing} from 'lit';
+
+import {format, formatISO, addHours} from 'date-fns';
 
 import '@vaadin/vaadin-dialog';
 import '@vaadin/vaadin-button';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/iron-icons/iron-icons.js';
+
 
 /**
 * `<app-add-event>` Custom component to add a new event to the calendar
@@ -27,12 +22,10 @@ import '@polymer/iron-icons/iron-icons.js';
 export class AppAddEvent extends LitElement {
 
   /**
-  * Static getter styles
-  * 
-  * @returns {styles}
+  * Static styles
   */
-  static get styles() {
-    return css`
+  static styles = [
+    css`
       .icon {
         font-family: 'Material Icons', serif;
         font-style: normal;
@@ -90,8 +83,8 @@ export class AppAddEvent extends LitElement {
         margin-top:10px;
       }
       
-    `;
-  }
+    `
+  ];
 
   /**
   * Static getter properties

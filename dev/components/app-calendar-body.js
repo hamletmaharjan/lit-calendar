@@ -1,14 +1,10 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 import {LitElement, html, css} from 'lit';
+
 import {format, addDays,startOfWeek, 
         endOfWeek, startOfMonth, endOfMonth} from 'date-fns';
 
 import './app-calendar-cell';
+
 
 /**
  * `<app-calendar-body>` Custom component to add a calendar body
@@ -24,11 +20,9 @@ export class AppCalendarBody extends LitElement {
 
   /**
    * Static getter styles
-   * 
-   * @returns {styles}
    */
-  static get styles() {
-    return css`
+  static styles = [
+    css`
       /* GENERAL */
       
       * {
@@ -77,8 +71,8 @@ export class AppCalendarBody extends LitElement {
         border-right: 1px solid var(--border-color);
 
       }
-    `;
-  }
+    `
+  ];
  
   /**
    * Static getter properties

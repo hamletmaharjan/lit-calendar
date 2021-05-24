@@ -1,13 +1,9 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 import {LitElement, html, css, nothing} from 'lit';
+
 import {isSameDay, isSameMonth, formatISO, format} from 'date-fns';
 
 import './app-menu';
+
 
 /**
  * `<app-calendar-body>` Custom component to add a calendar body
@@ -22,12 +18,10 @@ import './app-menu';
 export class AppCalendarCell extends LitElement {
 
   /**
-   * Static getter styles
-   * 
-   * @returns {styles}
+   * Staticstyles
    */
-  static get styles() {
-    return css`
+  static styles = [
+    css`
       /* GENERAL */
       
       * {
@@ -131,8 +125,8 @@ export class AppCalendarCell extends LitElement {
         color: #64fa9d;
         padding-right: 5px;
       }
-    `;
-  }
+    `
+  ];
 
 
   /**

@@ -1,15 +1,11 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-import {format, isSameDay} from 'date-fns';
 import {LitElement, html, css, nothing} from 'lit';
 import { styleMap } from 'lit/directives/style-map';
 
+import {format, isSameDay} from 'date-fns';
+
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-listbox/paper-listbox.js';
+
 
 /**
 * `<app-menu>` Custom component to list more of events
@@ -24,12 +20,10 @@ import '@polymer/paper-listbox/paper-listbox.js';
 export class AppMenu extends LitElement {
 
   /**
-  * Static getter styles
-  * 
-  * @returns {styles}
+  * Static styles
   */
-  static get styles() {
-    return css`
+  static styles = [
+    css`
       :host {
         width:20%;
       }
@@ -86,8 +80,8 @@ export class AppMenu extends LitElement {
         color: #07a643;
         padding-right: 5px;
       }
-    `;
-  }
+    `
+  ];
 
   /**
   * Static getter properties

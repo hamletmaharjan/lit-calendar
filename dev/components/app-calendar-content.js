@@ -1,13 +1,8 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 import {LitElement, html} from 'lit';
 
 import './app-calendar-body';
 import './app-calendar-content-header';
+
 
 /**
  * `<app-calendar-content>` Custom component to add a calendar content

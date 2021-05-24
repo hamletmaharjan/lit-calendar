@@ -1,11 +1,7 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 import {LitElement, html, css} from 'lit';
+
 import {format, addDays, startOfWeek} from 'date-fns';
+
 
 /**
  * `<app-calendar-content-header>` Custom component to add a calendar content header eg. sun, mon, tue
@@ -21,11 +17,9 @@ export class AppCalendarContentHeader extends LitElement {
 
   /**
    * Static getter styles
-   * 
-   * @returns {styles}
    */
-  static get styles() {
-    return css`
+  static styles = [
+    css`
       /* GENERAL */
       * {
         box-sizing: border-box;
@@ -85,8 +79,8 @@ export class AppCalendarContentHeader extends LitElement {
         padding: .75em 0;
         border-bottom: 1px solid var(--border-color);
       }
-    `;
-  }
+    `
+  ];
 
   /**
    * Static getter properties
