@@ -5,7 +5,7 @@
  */
 
 import {LitElement, html, css, nothing} from 'lit';
-import {isSameDay, isSameMonth, formatISO} from 'date-fns';
+import {isSameDay, isSameMonth, formatISO, format} from 'date-fns';
 
 import './app-menu';
 
@@ -114,9 +114,10 @@ export class AppCalendarCell extends LitElement {
         color:white;
         width:90%;
         margin:0 auto;
-        padding:0px 10px;
+        padding:0px 10px 0px 5px;
         border-radius:5px;
         margin-bottom:2px;
+        transform: translate(0, 0);
       }
       .more {
         text-align:center;
@@ -125,6 +126,10 @@ export class AppCalendarCell extends LitElement {
         position: absolute;
         top:5px;
         z-index:4;
+      }
+      .time {
+        color: #64fa9d;
+        padding-right: 5px;
       }
     `;
   }
@@ -238,7 +243,8 @@ export class AppCalendarCell extends LitElement {
   handleDrop(e) {
     e.dataTransfer.effectAllowed = "move";
     let id = e.dataTransfer.getData('text/plain');
-    this.onEventChange(id, formatISO(this.day));
+    // this.onEventChange(id, formatISO(this.day));
+    this.onEventChange(id, format(this.day,'yyyy-MM-dd'))
   }
 
   handleDragStart(e, key) {
@@ -249,13 +255,17 @@ export class AppCalendarCell extends LitElement {
   renderEventsTemplate() {
     let allEvents = [];
     let count = 0;
-    this.events.forEach(item => {
+    this.sortedEvents = [...this.events];
+    this.sortedEvents.sort(function (a, b) {
+      return a.startTime.localeCompare(b.startTime);
+    });
+    this.sortedEvents.forEach(item => {
       if(isSameDay(new Date(item.start), this.day)){
         if(count<2){
           allEvents.push(
             html`
               <div class="event" draggable="true" key="${item.id}">
-                <span>${item.title.substring(0,12)}</span>
+                <span class="time">${this.tConvert(item.startTime)}</span><span>${item.title.substring(0,9)}</span>
               </div>
             `
           )
@@ -276,6 +286,19 @@ export class AppCalendarCell extends LitElement {
     }
 
     return allEvents;
+  }
+
+
+  tConvert(time) {
+    // Check correct time format and split into components
+    time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+    if (time.length > 1) { // If time format correct
+      time = time.slice(1); // Remove full string match value
+      time[5] = +time[0] < 12 ? 'a' : 'p'; // Set AM/PM
+      time[0] = +time[0] % 12 || 12; // Adjust hours
+    }
+    return time.join(''); // return adjusted time or original string
   }
 
   handleMore() {

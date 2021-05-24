@@ -136,6 +136,7 @@ export class AppAddEvent extends LitElement {
 
     this.dateFormat = "MMMM yyyy";
     this.title = '';
+    this.startTime = '';
 
     this.dialogRenderer = this.dialogRenderer.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -146,11 +147,16 @@ export class AppAddEvent extends LitElement {
     let name = e.target.name;
     let val = e.target.value;
     this[name] = val;
+    console.log(val)
 
   }
 
   handleAdd() {
-    this.onSubmitData({title:this.title?this.title:'untitled', start: formatISO(this.day)});
+    let startTime = "12:00";
+    let endTime = "13:00";
+    this.onSubmitData({title:this.title?this.title:'untitled', start: formatISO(this.day), startTime:startTime,
+      endTime:endTime
+    });
     this.title = '';
   }  
 
@@ -185,6 +191,7 @@ export class AppAddEvent extends LitElement {
       <div>
         <label>Event Title</label><br>
         <input type="text" .value="${this.title}" @input="${this.handleInputChange}" name="title" style="width:95%;"><br>
+        <input type="time" name="startTime" @input="${this.handleInputChange}"> - <input type="time" name="endTime" @input="${this.handleInputChange}">
         <div class="modal-footer" style="margin-top:15px">
           <vaadin-button theme="primary small" @click="${this.handleAdd}">ADD</vaadin-button>
           <vaadin-button theme="small" @click="${this.onHideAddEvent}">CANCEL</vaadin-button>

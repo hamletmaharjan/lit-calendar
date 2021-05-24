@@ -123,15 +123,15 @@ export class AppCalendar extends LitElement {
     this.testDate = new Date();
     this.appMenuPositions = {top:'0px', left:'0px'}
     this.events = [
-      {"id":1, "start":"2021-05-17T08:00:00.000Z","end":"2021-05-17T17:00:00.000Z","title":"Business of Software Conference"},
-      {"id":2, "start":"2021-05-17T08:00:00.000Z","end":"2021-05-17T17:00:00.000Z","title":"test"},
-      {"id":3, "start":"2021-05-22T12:00:00.000Z","end":"2021-05-21T20:00:00.000Z","title":"All hands"},
-      {"id":4, "start":"2021-05-18T08:00:00.000Z","end":"2021-05-18T17:00:00.000Z","title":"Business of Software Conference"},
-      {"id":5, "start":"2021-05-18T08:00:00.000Z","end":"2021-05-18T17:00:00.000Z","title":"test"},
-      {"id":6, "start":"2021-05-22T12:00:00.000Z","end":"2021-05-21T20:00:00.000Z","title":"All hands"},
-      {"id":7, "start":"2021-05-29T12:00:00.000Z","end":"2021-05-39T20:00:00.000Z","title":"Community binge marathon"},
-      {"id":8, "start":"2021-05-18T06:00:00.000Z","end":"2021-05-18T07:00:00.000Z","title":"Team Meeting"},
-      {"id":9, "start":"2021-05-17T06:00:00.000Z","end":"2021-05-17T07:00:00.000Z","title":"some Meeting"}
+      {"id":1, "start":"2021-05-17","end":"2021-05-17","startTime":"12:00", "endTime":"12:00","title":"Business of Software Conference"},
+      {"id":2, "start":"2021-05-17","end":"2021-05-17","startTime":"12:00", "endTime":"12:00","title":"test"},
+      {"id":3, "start":"2021-05-22","end":"2021-05-21","startTime":"12:00", "endTime":"12:00","title":"All hands"},
+      {"id":4, "start":"2021-05-18","end":"2021-05-18","startTime":"12:00", "endTime":"12:00","title":"Stand up"},
+      {"id":5, "start":"2021-05-18","end":"2021-05-18","startTime":"09:00", "endTime":"12:00","title":"test"},
+      {"id":6, "start":"2021-05-22","end":"2021-05-21","startTime":"12:00", "endTime":"12:00","title":"weekend program"},
+      {"id":7, "start":"2021-05-29","end":"2021-05-39","startTime":"12:00", "endTime":"12:00","title":"Community binge marathon"},
+      {"id":8, "start":"2021-05-18","end":"2021-05-18","startTime":"12:00", "endTime":"12:00","title":"Team Meeting"},
+      {"id":9, "start":"2021-05-17","end":"2021-05-17","startTime":"12:00", "endTime":"12:00","title":"some Meeting"}
     ];
 
     this.nextMonth = this.nextMonth.bind(this);
@@ -188,6 +188,7 @@ export class AppCalendar extends LitElement {
       } 
       return {...item}
     });
+    console.log(this.events)
   }
 
   handleAddEvent(day) {

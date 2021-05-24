@@ -82,6 +82,10 @@ export class AppMenu extends LitElement {
         background: #dcdee0;
         cursor: pointer;
       }
+      .time {
+        color: #07a643;
+        padding-right: 5px;
+      }
     `;
   }
 
@@ -163,6 +167,18 @@ export class AppMenu extends LitElement {
     `;
   }
 
+  tConvert(time) {
+    // Check correct time format and split into components
+    time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+    if (time.length > 1) { // If time format correct
+      time = time.slice(1); // Remove full string match value
+      time[5] = +time[0] < 12 ? 'a' : 'p'; // Set AM/PM
+      time[0] = +time[0] % 12 || 12; // Adjust hours
+    }
+    return time.join(''); // return adjusted time or original string
+  }
+
   /**
   * render method
   * 
@@ -173,6 +189,9 @@ export class AppMenu extends LitElement {
     let filteredEvents = this.items.filter(eventItem => {
       return isSameDay(new Date(eventItem.start), this.day);
     });
+    filteredEvents.sort(function (a, b) {
+      return a.startTime.localeCompare(b.startTime);
+    });
     return this.showAppMenu? html`
       <div class="listbox" style=${styleMap(this.positions)}>
         <div class="list-heading">
@@ -181,7 +200,10 @@ export class AppMenu extends LitElement {
         </div>
         <div class="list-body">
           ${filteredEvents.map(item => {
-            return html`<div class="list-item" draggable="true" key="${item.id}">${item.title}</div>`;
+            return html`
+              <div class="list-item" draggable="true" key="${item.id}">
+                <span class="time">${this.tConvert(item.startTime)}</span><span>${item.title}</span>
+              </div>`;
           })}
         </div>
       </div>
