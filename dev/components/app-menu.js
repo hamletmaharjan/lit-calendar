@@ -160,8 +160,8 @@ export class AppMenu extends LitElement {
    * @param {Integer} key 
    */
   handleDragStart(event, key) {
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData("text/plain", key);
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData("text/plain", key);
   }
 
   /**
