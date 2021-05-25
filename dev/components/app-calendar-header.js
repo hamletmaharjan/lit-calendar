@@ -1,11 +1,7 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-import {format} from 'date-fns';
 import {LitElement, html, css} from 'lit';
+ 
+import {format} from 'date-fns';
+
 
 /**
  * `<app-calendar-header>` Custom component to add a calendar header
@@ -20,12 +16,10 @@ import {LitElement, html, css} from 'lit';
 export class AppCalendarHeader extends LitElement {
 
   /**
-   * Static getter styles
-   * 
-   * @returns {styles}
+   * Static styles
    */
-  static get styles() {
-    return css`
+  static styles = [
+    css`
       .icon {
         font-family: 'Material Icons', serif;
         font-style: normal;
@@ -125,8 +119,8 @@ export class AppCalendarHeader extends LitElement {
       .header .icon:last-of-type {
         margin-right: 1em;
       }
-    `;
-  }
+    `
+  ];
 
   /**
    * Static getter properties
@@ -137,21 +131,25 @@ export class AppCalendarHeader extends LitElement {
     return {
       /**
        * holds the format of the date
+       * @type {{dateFormat:String}}
        */
       dateFormat: {type: String},
 
       /**
        * holds the current date to represent the month
+       * @type {{currentMonth:Object}}
        */
       currentMonth: {type: Object},
 
       /**
        * handler function for next month
+       * @type {{onNextMonthClick:Function}}
        */
       onNextMonthClick: {type: Function},
 
       /**
        * handler function for previous month
+       * @type {{onPrevMonthClick:Function}}
        */
       onPrevMonthClick: {type:Function}
       

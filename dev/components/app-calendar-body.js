@@ -1,14 +1,10 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 import {LitElement, html, css} from 'lit';
+
 import {format, addDays,startOfWeek, 
         endOfWeek, startOfMonth, endOfMonth} from 'date-fns';
 
 import './app-calendar-cell';
+
 
 /**
  * `<app-calendar-body>` Custom component to add a calendar body
@@ -24,11 +20,9 @@ export class AppCalendarBody extends LitElement {
 
   /**
    * Static getter styles
-   * 
-   * @returns {styles}
    */
-  static get styles() {
-    return css`
+  static styles = [
+    css`
       /* GENERAL */
       
       * {
@@ -77,8 +71,8 @@ export class AppCalendarBody extends LitElement {
         border-right: 1px solid var(--border-color);
 
       }
-    `;
-  }
+    `
+  ];
  
   /**
    * Static getter properties
@@ -89,31 +83,37 @@ export class AppCalendarBody extends LitElement {
     return {
       /**
       * The object that holds the current date
+      * @type {{selectedDate:Object}}
       */
       selectedDate: {type: Object},
 
       /**
       * The object that holds the current date to represent current month
+      * @type {{currentMonth:Object}}
       */
       currentMonth: {type: Object},
 
       /**
        * array to hold event passed from parent and pass it down
+       * @type {{events:Array}}
        */
       events: {type:Array},
 
       /**
        * handler function that triggers when user click on more events option
+       * @type {{onMoreMenuClick:Function}}
        */
       onMoreMenuClick: {type: Function},
 
       /**
        * handler function when event is changed on drag
+       * @type {{onEventChange:Function}}
        */
       onEventChange: {type: Function},
 
       /**
        * handler function when user adds event
+       * @type {{onAddEvent:Function}}
        */
       onAddEvent: {type: Function}
     };
@@ -134,7 +134,7 @@ export class AppCalendarBody extends LitElement {
     let days = [];
     let day = startDate;
     let formattedDate = "";
-    // console.log(typeof(monthStart));
+    
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
         formattedDate = format(day, dateFormat);

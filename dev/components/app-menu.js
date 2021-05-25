@@ -1,15 +1,11 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-import {format, isSameDay} from 'date-fns';
 import {LitElement, html, css, nothing} from 'lit';
 import { styleMap } from 'lit/directives/style-map';
 
+import {format, isSameDay} from 'date-fns';
+
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-listbox/paper-listbox.js';
+
 
 /**
 * `<app-menu>` Custom component to list more of events
@@ -24,12 +20,10 @@ import '@polymer/paper-listbox/paper-listbox.js';
 export class AppMenu extends LitElement {
 
   /**
-  * Static getter styles
-  * 
-  * @returns {styles}
+  * Static styles
   */
-  static get styles() {
-    return css`
+  static styles = [
+    css`
       :host {
         width:20%;
       }
@@ -82,8 +76,12 @@ export class AppMenu extends LitElement {
         background: #dcdee0;
         cursor: pointer;
       }
-    `;
-  }
+      .time {
+        color: #07a643;
+        padding-right: 5px;
+      }
+    `
+  ];
 
   /**
   * Static getter properties
@@ -94,34 +92,40 @@ export class AppMenu extends LitElement {
     return {
       /**
       * holds formatted date in number format
+      * @type {{items:Array}}
       */
       items: {type: Array},
 
       /**
        * Object that defines where to position the component with css with left and top value
-       *
        * @type {{positions : Object}}
        */
       positions: {type: Object},
 
       /**
        * handler function to hide this component
+       * @type {{onCancel:Function}}
        */
       onCancel: {type: Function},
 
       /**
        * object to store date on which popup events list is shown
+       * @type {{day:Object}}
        */
       day: {type: Object},
 
       /**
        * to check where to show this component or not
+       * @type {{showAppMenu:Boolean}}
        */
       showAppMenu: {type: Boolean}
       
     };
   }
 
+  /**
+   * constructor
+   */
   constructor() {
     super();
 
@@ -129,6 +133,9 @@ export class AppMenu extends LitElement {
     this.positions = {top:'10px', left: '10px'};
   }
 
+  /**
+   * function to add drag and drop events 
+   */
   updated() {
     let draggableItems = this.shadowRoot.querySelectorAll('.list-item');
     if(draggableItems.length!=0){
@@ -139,28 +146,54 @@ export class AppMenu extends LitElement {
     this.addEventListener('dragend', this.handleDragLeave);
   }
 
-  handleDragLeave(e) {
+  /**
+   * 
+   * @param {Object} event
+   */
+  handleDragLeave(event) {
     console.log('end');
-    // this.requestUpdate();
   }
 
-  handleDragStart(e, key) {
-    console.log('dragging list');
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData("text/plain", key);
-    // console.log('dragging ', key);
+  /**
+   * handler for drag start
+   * @param {Object} event 
+   * @param {Integer} key 
+   */
+  handleDragStart(event, key) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData("text/plain", key);
   }
 
+  /**
+   * template to be rendered
+   * @returns html
+   */
   renderTemplate() {
-    
     return  html`
-    <p>something</p>
-      <paper-listbox class="list">
+      <p>something</p>
+        <paper-listbox class="list">
         ${this.items.map(({...item}) => {
           return html`<paper-item>${item.title}</paper-item>`;
         })}
       </paper-listbox>
     `;
+  }
+
+  /**
+   * function to convert 24hr time to 12hr
+   * @param {String} time 
+   * @returns String
+   */
+  tConvert(time) {
+    // Check correct time format and split into components
+    time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+    if (time.length > 1) { // If time format correct
+      time = time.slice(1); // Remove full string match value
+      time[5] = +time[0] < 12 ? 'a' : 'p'; // Set AM/PM
+      time[0] = +time[0] % 12 || 12; // Adjust hours
+    }
+    return time.join(''); // return adjusted time or original string
   }
 
   /**
@@ -173,6 +206,9 @@ export class AppMenu extends LitElement {
     let filteredEvents = this.items.filter(eventItem => {
       return isSameDay(new Date(eventItem.start), this.day);
     });
+    filteredEvents.sort(function (a, b) {
+      return a.startTime.localeCompare(b.startTime);
+    });
     return this.showAppMenu? html`
       <div class="listbox" style=${styleMap(this.positions)}>
         <div class="list-heading">
@@ -181,7 +217,10 @@ export class AppMenu extends LitElement {
         </div>
         <div class="list-body">
           ${filteredEvents.map(item => {
-            return html`<div class="list-item" draggable="true" key="${item.id}">${item.title}</div>`;
+            return html`
+              <div class="list-item" draggable="true" key="${item.id}">
+                <span class="time">${this.tConvert(item.startTime)}</span><span>${item.title}</span>
+              </div>`;
           })}
         </div>
       </div>
@@ -191,4 +230,3 @@ export class AppMenu extends LitElement {
 }
 
 window.customElements.define('app-menu', AppMenu);
- 

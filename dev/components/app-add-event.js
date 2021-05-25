@@ -1,18 +1,13 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-//  import {format} from 'date-fns';
-import {format, formatISO, addHours} from 'date-fns';
 import {customElement, property} from 'lit/decorators.js';
 import {LitElement, html, css, render, nothing} from 'lit';
+
+import {format, formatISO, addHours} from 'date-fns';
 
 import '@vaadin/vaadin-dialog';
 import '@vaadin/vaadin-button';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/iron-icons/iron-icons.js';
+
 
 /**
 * `<app-add-event>` Custom component to add a new event to the calendar
@@ -27,12 +22,10 @@ import '@polymer/iron-icons/iron-icons.js';
 export class AppAddEvent extends LitElement {
 
   /**
-  * Static getter styles
-  * 
-  * @returns {styles}
+  * Static styles
   */
-  static get styles() {
-    return css`
+  static styles = [
+    css`
       .icon {
         font-family: 'Material Icons', serif;
         font-style: normal;
@@ -90,8 +83,8 @@ export class AppAddEvent extends LitElement {
         margin-top:10px;
       }
       
-    `;
-  }
+    `
+  ];
 
   /**
   * Static getter properties
@@ -102,26 +95,31 @@ export class AppAddEvent extends LitElement {
     return {
       /**
       * holds the format of the date
+      * @type {{dateFormat:String}}
       */
       dateFormat: {type: String},
 
       /**
        * holds title of the event to be added
+       * @type {{title:String}}
        */
       title: {type: String},
 
       /**
        * handler function on submit event add
+       * @type {{onSubmitData: Function}}
        */
       onSubmitData: {type: Function},
 
       /**
        * day on which event to be added
+       * @type {{day:Object}}
        */
       day: {type: Object},
 
       /**
        * handler functin to hide this component
+       * @type {{onHideAddEvent:Function}}
        */
       onHideAddEvent: {type: Function}
 
@@ -134,39 +132,61 @@ export class AppAddEvent extends LitElement {
   constructor() {
     super();
 
-    this.dateFormat = "MMMM yyyy";
     this.title = '';
+    this.endTime = '';
+    this.startTime = '';
+    this.dateFormat = "MMMM yyyy";
 
+    this.handleAdd = this.handleAdd.bind(this);
     this.dialogRenderer = this.dialogRenderer.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleAdd = this.handleAdd.bind(this);
   }
 
-  handleInputChange(e) {
-    let name = e.target.name;
-    let val = e.target.value;
-    this[name] = val;
-
+  /**
+   * handler function when input changes
+   * @param {Object} event 
+   */
+  handleInputChange(event) {
+    if(event.target.name && event.target.value){
+      let name = event.target.name;
+      let val = event.target.value;
+      this[name] = val;
+    }
   }
 
+  /**
+   * handler function when add button is clicked
+   */
   handleAdd() {
-    this.onSubmitData({title:this.title?this.title:'untitled', start: formatISO(this.day)});
-    this.title = '';
+    if(this.startTime.length == 0) {
+      this.startTime = '12:00';
+    }
+    if(this.endTime.length == 0) {
+      this.endTime = '13:00';
+    }
+    this.onSubmitData({title:this.title?this.title:'untitled', start: formatISO(this.day), startTime:this.startTime,
+      endTime:this.endTime
+    });
+    [this.title, this.startTime, this.endTime] = ['','',''];
   }  
 
+  /**
+   * custom template to be rendered
+   * @returns {html}
+   */
   renderTemplate() {
     return html`
     <label>Time</label><br>
     <input type="time" @input="${this.handleInputChange}" name="startDate"> - <input type="time" @input="${this.handleInputChange}"> <br>
     `
   }
+
   /**
   * render method
   * 
   * @returns {customElements}
   */
   render() {
-    // console.log(this.title)
     return html`<vaadin-dialog
       no-close-on-esc no-close-on-outside-click
       opened
@@ -176,6 +196,11 @@ export class AppAddEvent extends LitElement {
      
   }
 
+  /**
+   * renderer function that returns html to be displayed on dialog
+   * @param {Object} root 
+   * @param {Object} dialog 
+   */
   dialogRenderer(root, dialog) {
     const innerHTML = html`
       <div class="header">
@@ -185,6 +210,7 @@ export class AppAddEvent extends LitElement {
       <div>
         <label>Event Title</label><br>
         <input type="text" .value="${this.title}" @input="${this.handleInputChange}" name="title" style="width:95%;"><br>
+        <input type="time" name="startTime" @input="${this.handleInputChange}"> - <input type="time" name="endTime" @input="${this.handleInputChange}">
         <div class="modal-footer" style="margin-top:15px">
           <vaadin-button theme="primary small" @click="${this.handleAdd}">ADD</vaadin-button>
           <vaadin-button theme="small" @click="${this.onHideAddEvent}">CANCEL</vaadin-button>
@@ -192,7 +218,6 @@ export class AppAddEvent extends LitElement {
       </div>
     `;
     render(innerHTML, root);
-    // console.log('here',root, dialog);
   }  
 
 

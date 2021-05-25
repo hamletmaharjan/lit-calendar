@@ -1,13 +1,8 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
 import {LitElement, html} from 'lit';
 
 import './app-calendar-body';
 import './app-calendar-content-header';
+
 
 /**
  * `<app-calendar-content>` Custom component to add a calendar content
@@ -30,31 +25,37 @@ export class AppCalendarContent extends LitElement {
     return {
       /**
        * holds the current date to represent the month to pass down to its children components
+       * @type {{currentMonth:Object}}
        */
       currentMonth: {type: Object},
 
       /**
        * holds the current date to pass down to its children components
+       * @type {{selectedDate:Object}}
        */
       selectedDate: {type:Object},
 
       /**
        * array to hold event passed from parent and pass it down
+       * @type {{events:Array}}
        */
       events: {type:Array},
 
       /**
        * handler function that triggers when user click on more events option
+       * @type {{onMoreMenuClick:Function}}
        */
       onMoreMenuClick: {type: Function},
 
       /**
        * handler function when event changes on drag
+       * @type {{onEventChange:Function}}
        */
       onEventChange: {type: Function},
 
       /**
        * handler function when user adds event
+       * @type {{onAddEvent:Function}}
        */
       onAddEvent: {type: Function}
     };
