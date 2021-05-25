@@ -1,7 +1,7 @@
 import {LitElement, html, nothing} from 'lit';
 
-import './app-calendar-body';
-import './app-calendar-content-header';
+import './app-calendar-week-body';
+import './app-calendar-content-week-header';
 
 
 /**
@@ -14,7 +14,7 @@ import './app-calendar-content-header';
  * @litElement
  * @customElement
  */
-export class AppCalendarContent extends LitElement {
+export class AppCalendarContentWeek extends LitElement {
 
   /**
    * Static getter properties
@@ -28,6 +28,7 @@ export class AppCalendarContent extends LitElement {
        * @type {{currentMonth:Object}}
        */
       currentMonth: {type: Object},
+      currentDate: {type: Object},
 
       /**
        * holds the current date to pass down to its children components
@@ -68,26 +69,25 @@ export class AppCalendarContent extends LitElement {
    * @returns {customElements}
    */
   render() {
-    console.log(this.view)
-    return this.view=='month'? html`
+    return this.view=="week"? html`
       <div>
-        <app-calendar-content-header
-        .currentMonth="${this.currentMonth}"
-        ></app-calendar-content-header>
-
-        <app-calendar-body
+        <app-calendar-content-week-header
+        .currentDate="${this.currentDate}"
+        .selectedDate="${this.selectedDate}"
+        ></app-calendar-content-week-header>
+      </div>
+      <app-calendar-week-body
           .events="${this.events}"
           .selectedDate="${this.selectedDate}"
           .currentMonth="${this.currentMonth}"
           .onMoreMenuClick="${this.onMoreMenuClick}"
           .onEventChange="${this.onEventChange}"
           .onAddEvent="${this.onAddEvent}"
-          ></app-calendar-body>
-      </div>
-    `: nothing;
+          ></app-calendar-week-body>
+    `:nothing;
   }
 
 }
 
-window.customElements.define('app-calendar-content', AppCalendarContent);
+window.customElements.define('app-calendar-content-week', AppCalendarContentWeek);
  

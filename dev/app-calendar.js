@@ -10,6 +10,8 @@ import './components/app-calendar-cell.js';
 import './components/app-calendar-content.js';
 import './components/app-calendar-content-header.js';
 
+import './components/app-calendar-content-week';
+
 
 /**
  * `<app-calendar>` Custom component to add a calendar
@@ -99,7 +101,9 @@ export class AppCalendar extends LitElement {
        * holds top and left position of popu event list
        * @type {{appMenuPositions:Object}}
        */
-      appMenuPositions: {type: Object}
+      appMenuPositions: {type: Object},
+
+      view: {type:String}
     };
   }
 
@@ -109,6 +113,7 @@ export class AppCalendar extends LitElement {
   constructor() {
     super();
 
+    this.view = 'week';
     this.showAppMenu = false;
     this.showAddEvent = false;
     this.testDate = new Date();
@@ -132,6 +137,7 @@ export class AppCalendar extends LitElement {
     this.clickHandler = this.clickHandler.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleAddEvent = this.handleAddEvent.bind(this);
+    this.handleChangeView = this.handleChangeView.bind(this);
     this.handleShowAppMenu = this.handleShowAppMenu.bind(this);
     this.handleChangeEvent = this.handleChangeEvent.bind(this);
     this.handleHideAddEvent = this.handleHideAddEvent.bind(this);
@@ -148,6 +154,10 @@ export class AppCalendar extends LitElement {
     this.shadowRoot.addEventListener('click', this.clickHandler);
   }
 
+  /**
+   * Handler function for click event
+   * @param {Object} event 
+   */
   clickHandler(event) {
     if(event.target!=this.menu && this.showAppMenu){
       this.counter++;
@@ -155,6 +165,10 @@ export class AppCalendar extends LitElement {
         this.handleCancel();
       }
     }
+  }
+
+  handleChangeView(value) {
+    this.view = value;
   }
 
   /**
@@ -266,7 +280,10 @@ export class AppCalendar extends LitElement {
           .onPrevMonthClick="${this.prevMonth}"
           .onNextMonthClick="${this.nextMonth}"
           .currentMonth="${this.currentMonth}"
+          .onChangeView="${this.handleChangeView}"
+          .view="${this.view}"
           ></app-calendar-header>
+
         <app-calendar-content 
           .events="${this.events}" 
           .currentMonth="${this.currentMonth}" 
@@ -274,7 +291,20 @@ export class AppCalendar extends LitElement {
           .onMoreMenuClick="${this.handleShowAppMenu}"
           .onEventChange="${this.handleChangeEvent}"
           .onAddEvent="${this.handleAddEvent}"
+          .view="${this.view}"
           ></app-calendar-content>
+
+        <app-calendar-content-week
+          .currentDate="${this.currentMonth}"
+          .currentMonth="${this.currentMonth}"
+          .selectedDate="${this.selectedDate}"
+          .events="${this.events}" 
+          .onMoreMenuClick="${this.handleShowAppMenu}"
+          .onEventChange="${this.handleChangeEvent}"
+          .onAddEvent="${this.handleAddEvent}"
+          .view="${this.view}"
+        >
+        </app-calendar-content-week>
         <app-menu 
         .onCancel="${this.handleCancel}" 
         .items="${this.events}" 

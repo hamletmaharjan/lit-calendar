@@ -119,6 +119,34 @@ export class AppCalendarHeader extends LitElement {
       .header .icon:last-of-type {
         margin-right: 1em;
       }
+      .tab {
+        float:left;
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        // padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+        color:var(--text-color);
+        // font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+      }
+      
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
+      
+      /* Create an active/current tablink class */
+      .tab button.active {
+        background-color: #ccc;
+      }
     `
   ];
 
@@ -151,7 +179,10 @@ export class AppCalendarHeader extends LitElement {
        * handler function for previous month
        * @type {{onPrevMonthClick:Function}}
        */
-      onPrevMonthClick: {type:Function}
+      onPrevMonthClick: {type:Function},
+
+      onChangeView: {type: Function},
+      view: {type: String}
       
     };
   }
@@ -184,6 +215,11 @@ export class AppCalendarHeader extends LitElement {
           </span>
         </div>
         <div class="col col-end">
+          <div class="tab">
+            <button class="tablinks ${this.view=='month'?'active':''}" @click="${()=> this.onChangeView('month')}">month</button>
+            <button class="tablinks ${this.view=='week'?'active':''}" @click="${()=> this.onChangeView('week')}">week</button>
+            <button class="tablinks" >day</button>
+          </div>
           <div class="icon"  @click="${this.onNextMonthClick}">chevron_right</div>
         </div>
       </div>
