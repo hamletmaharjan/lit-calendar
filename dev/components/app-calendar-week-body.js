@@ -1,7 +1,7 @@
 import {LitElement, html, css} from 'lit';
 
 import {format, addDays,startOfWeek, 
-        endOfWeek, startOfMonth, endOfMonth} from 'date-fns';
+        endOfWeek, startOfMonth, endOfMonth, isAfter, isBefore} from 'date-fns';
 
 import './app-calendar-week-cell';
 // import {tConvert} from '../helpers/time';
@@ -51,7 +51,7 @@ export class AppCalendarWeekBody extends LitElement {
       }
 
       .body .row {
-        border-bottom: 1px solid var(--border-color);
+        // border-bottom: 1px solid var(--border-color);
       }
       
       .body .row:last-child {
@@ -135,15 +135,28 @@ export class AppCalendarWeekBody extends LitElement {
     }
     return time.join(''); // return adjusted time or original string
   }
+
+  timeDifference(a, b) {
+    let arr1 = a.split(':');
+    let newHr1 = parseInt(arr1[0]);
+    let arr2 = b.split(':');
+    let newHr2 = parseInt(arr2[0]);
+    return newHr2-newHr1-1;
+  }
  
   /**
    * calender body template to be rendered
    */
   contentBodyTemplate() {
     const startDate = startOfWeek(this.currentMonth);
+    let filteredEvents = this.events.filter(eventItem => {
+      return isAfter(new Date(eventItem.start), startDate) && isBefore(new Date(eventItem.start), addDays(startDate,7));
+    });
+    filteredEvents = filteredEvents.map(eventItem=> {
+      return {...eventItem, duration: this.timeDifference(eventItem.startTime, eventItem.endTime)}
+    });
     const dateFormat = "d";
     const rows = [];
-
     let days = [];
     let day = startDate;
     let formattedDate = "";
@@ -151,7 +164,7 @@ export class AppCalendarWeekBody extends LitElement {
     let hours = 0;
     while (hours < 24) {
       formatHours = hours<10? '0'+hours+':00':hours + ':00';
-      days.push(html`<div class="col"><div class="hours">${this.tConvert(formatHours)}</div></div>`)
+      days.push(html`<div class="col"><div class="hours">${this.tConvert(formatHours)} ${hours}</div></div>`)
       for (let i = 0; i < 7; i++) {
         day = addDays(startDate, i);
         formattedDate = format(day, dateFormat);
@@ -162,6 +175,8 @@ export class AppCalendarWeekBody extends LitElement {
               .day="${day}"
               .selectedDate="${this.selectedDate}"
               .formattedDate="${formattedDate}"
+              .formattedHours="${formatHours}"
+              .events="${filteredEvents}"
               ></app-calendar-week-cell>
             </div>
           `

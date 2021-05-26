@@ -1,6 +1,6 @@
 import {LitElement, html, css, nothing} from 'lit';
 
-import {addMonths, subMonths, isAfter, isBefore, isSameDay, formatISO} from 'date-fns';
+import {addMonths, subMonths, isAfter, isBefore, isSameDay, formatISO, subWeeks, addWeeks} from 'date-fns';
 
 import './components/app-menu';
 import './components/app-add-event';
@@ -121,15 +121,15 @@ export class AppCalendar extends LitElement {
     this.selectedDate = new Date();
     this.appMenuPositions = {top:'0px', left:'0px'}
     this.events = [
-      {"id":1, "start":"2021-05-17","end":"2021-05-17","startTime":"12:00", "endTime":"12:00","title":"Business of Software Conference"},
-      {"id":2, "start":"2021-05-17","end":"2021-05-17","startTime":"12:00", "endTime":"12:00","title":"test"},
-      {"id":3, "start":"2021-05-22","end":"2021-05-21","startTime":"12:00", "endTime":"12:00","title":"All hands"},
-      {"id":4, "start":"2021-05-18","end":"2021-05-18","startTime":"12:00", "endTime":"12:00","title":"Stand up"},
+      {"id":1, "start":"2021-05-17","end":"2021-05-17","startTime":"12:00", "endTime":"13:00","title":"Business of Software Conference"},
+      {"id":2, "start":"2021-05-17","end":"2021-05-17","startTime":"15:00", "endTime":"17:00","title":"test"},
+      {"id":3, "start":"2021-05-22","end":"2021-05-21","startTime":"09:00", "endTime":"12:00","title":"All hands"},
+      {"id":4, "start":"2021-05-18","end":"2021-05-18","startTime":"11:00", "endTime":"18:00","title":"Stand up"},
       {"id":5, "start":"2021-05-18","end":"2021-05-18","startTime":"09:00", "endTime":"12:00","title":"test"},
-      {"id":6, "start":"2021-05-22","end":"2021-05-21","startTime":"12:00", "endTime":"12:00","title":"weekend program"},
-      {"id":7, "start":"2021-05-29","end":"2021-05-39","startTime":"12:00", "endTime":"12:00","title":"Community binge marathon"},
-      {"id":8, "start":"2021-05-18","end":"2021-05-18","startTime":"12:00", "endTime":"12:00","title":"Team Meeting"},
-      {"id":9, "start":"2021-05-17","end":"2021-05-17","startTime":"12:00", "endTime":"12:00","title":"some Meeting"}
+      {"id":6, "start":"2021-05-22","end":"2021-05-21","startTime":"03:00", "endTime":"05:00","title":"weekend program"},
+      {"id":7, "start":"2021-05-29","end":"2021-05-39","startTime":"20:00", "endTime":"22:00","title":"Community binge marathon"},
+      {"id":8, "start":"2021-05-18","end":"2021-05-18","startTime":"06:00", "endTime":"07:00","title":"Team Meeting"},
+      {"id":9, "start":"2021-05-17","end":"2021-05-17","startTime":"09:00", "endTime":"11:00","title":"some Meeting"}
     ];
 
     this.nextMonth = this.nextMonth.bind(this);
@@ -182,14 +182,26 @@ export class AppCalendar extends LitElement {
    * handler function when use click the next icon to add current day by a month
    */
   nextMonth() {
-    this.currentMonth = addMonths(this.currentMonth, 1);
+    if(this.view=='week') {
+      this.currentMonth = addWeeks(this.currentMonth,1);
+    }
+    else{
+      this.currentMonth = addMonths(this.currentMonth, 1);
+    }
+    
   }
 
   /**
    * handler function when use click the next icon to subtract current day by a month
    */
   prevMonth() {
-    this.currentMonth = subMonths(this.currentMonth, 1);
+    if(this.view=='week') {
+      this.currentMonth = subWeeks(this.currentMonth,1);
+    }
+    else{
+      this.currentMonth = subMonths(this.currentMonth, 1);
+    }
+   
   }
 
   /**

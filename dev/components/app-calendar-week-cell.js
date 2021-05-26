@@ -3,6 +3,7 @@ import {LitElement, html, css, nothing} from 'lit';
 import {isSameDay, isSameMonth, formatISO, format} from 'date-fns';
 
 import './app-menu';
+import { styleMap } from 'lit-html/directives/style-map';
 
 
 /**
@@ -45,6 +46,7 @@ export class AppCalendarWeekCell extends LitElement {
         position: relative;
         height: 2em;
         // border-right: 1px solid var(--border-color);
+        // border-bottom: 1px solid var(--border-color);
         overflow: hidden;
         cursor: pointer;
         background: var(--neutral-color);
@@ -106,12 +108,14 @@ export class AppCalendarWeekCell extends LitElement {
       .event {
         background:#039dfc;
         color:white;
-        width:90%;
+        width:100%;
+        height:100%;
         margin:0 auto;
         padding:0px 10px 0px 5px;
-        border-radius:5px;
+        // border-radius:5px;
         margin-bottom:2px;
         transform: translate(0, 0);
+        font-size:12px;
       }
       .more {
         text-align:center;
@@ -194,7 +198,9 @@ export class AppCalendarWeekCell extends LitElement {
        * handler function when user adds an event
        * @type {{onAddEvent:Function}}
        */
-      onAddEvent: {type: Function}
+      onAddEvent: {type: Function},
+      formattedHours: {type: String},
+      cellStyles: {type: Object}
     };
   }
 
@@ -206,6 +212,8 @@ export class AppCalendarWeekCell extends LitElement {
 
     this.hasMore = false;
     this.showAppMenu = false;
+    this.cellStyles = {}
+    this.cellStyles.borderTop = '1px solid var(--border-color);'
   }
 
   /**
@@ -274,6 +282,23 @@ export class AppCalendarWeekCell extends LitElement {
     e.dataTransfer.setData("text/plain", key);
   }
 
+  timeDifference(a, b) {
+    let arr1 = a.split(':');
+    let newHr1 = parseInt(arr1[0]);
+    let arr2 = b.split(':');
+    let newHr2 = parseInt(arr2[0]);
+    return newHr2-newHr1;
+  }
+
+  addHours(time, addition) {
+    // let x = parseInt(time.substring(0,2));
+    let arr = time.split(':');
+    let newHr = parseInt(arr[0]);
+    newHr += addition;
+    let newStr = newHr<10? '0'+ newHr: newHr;
+    return newStr + ':' + arr[1];
+  }
+
   /**
    * template to be rendered
    * @returns html
@@ -282,34 +307,55 @@ export class AppCalendarWeekCell extends LitElement {
     let allEvents = [];
     let count = 0;
     this.sortedEvents = [...this.events];
-    this.sortedEvents.sort(function (a, b) {
-      return a.startTime.localeCompare(b.startTime);
-    });
+    // this.sortedEvents.sort(function (a, b) {
+    //   return a.startTime.localeCompare(b.startTime);
+    // });
     this.sortedEvents.forEach(item => {
       if(isSameDay(new Date(item.start), this.day)){
-        if(count<2){
-          allEvents.push(
-            html`
-              <div class="event" draggable="true" key="${item.id}">
-                <span class="time">${this.tConvert(item.startTime)}</span><span>${item.title.substring(0,9)}</span>
-              </div>
-            `
-          )
+        // console.log(this.formattedHours.localeCompare(item.startTime))
+        // if(this.formattedHours.localeCompare(item.startTime) >= 0 && this.formattedHours.localeCompare(item.endTime) < 0){
+        if(item.startTime>= this.formattedHours && item.startTime< this.addHours(this.formattedHours,1)){
+          let styles = {}
+          if(item.duration == 0){
+            styles.borderRadius = '10px';
+          }
+          else {
+            styles.borderRadius = '10px 10px 0px 0px';
+          }
+          allEvents.push(html`<div class="event" style="${styleMap(styles)}"><span>${item.title}</span></div>`)
+          console.log(item.duration)
         }
+        if(item.startTime<= this.formattedHours && this.addHours(item.startTime, item.duration)>= this.formattedHours) {
+          let styles= {};
+          this.cellStyles.borderTop = 'none'
+          if(this.timeDifference(this.addHours(item.startTime, item.duration), this.formattedHours) == 0) {
+            styles.borderRadius = '0px 0px 10px 10px';
+          }
+          allEvents.push(html`<div class="event" style="${styleMap(styles)}"><span></span></div>`)
+        }
+        // if(count<2){
+        //   allEvents.push(
+        //     html`
+        //       <div class="event" draggable="true" key="${item.id}">
+        //         <span class="time">${this.tConvert(item.startTime)}</span><span>${item.title.substring(0,9)}</span>
+        //       </div>
+        //     `
+        //   )
+        // }
         count++;
       }
     });
 
-    if(count>2){
-      this.hasMore = true;
-      allEvents.push(
-        html`
-          <div class="more">
-            <span @click="${this.handleMoreClick}">+ ${count-2} more</span>
-          </div>
-        `
-      )
-    }
+    // if(count>2){
+    //   this.hasMore = true;
+    //   allEvents.push(
+    //     html`
+    //       <div class="more">
+    //         <span @click="${this.handleMoreClick}">+ ${count-2} more</span>
+    //       </div>
+    //     `
+    //   )
+    // }
 
     return allEvents;
   }
@@ -340,8 +386,8 @@ export class AppCalendarWeekCell extends LitElement {
   render() {
 
     return html`
-        <div class="cell">
-          
+        <div class="cell" style="${styleMap(this.cellStyles)}">
+          ${this.renderEventsTemplate()}
         </div>
     `;
     return html`
