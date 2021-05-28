@@ -49,7 +49,9 @@ export class AppCalendarWeekBody extends LitElement {
         flex-wrap: wrap;
         width: 100%;
       }
-
+      .body {
+        position:relative;
+      }
       .body .row {
         // border-bottom: 1px solid var(--border-color);
       }
@@ -137,20 +139,35 @@ export class AppCalendarWeekBody extends LitElement {
   }
 
   timeDifference(a, b) {
+    // let arr1 = a.split(':');
+    // let newHr1 = parseInt(arr1[0]);
+    // let arr2 = b.split(':');
+    // let newHr2 = parseInt(arr2[0]);
+    // return newHr2-newHr1-1;
     let arr1 = a.split(':');
     let newHr1 = parseInt(arr1[0]);
+    let newMin1 = parseInt(arr1[1]);
+    let total1 = newMin1 + newHr1 * 60;
     let arr2 = b.split(':');
     let newHr2 = parseInt(arr2[0]);
-    return newHr2-newHr1-1;
+    let newMin2 = parseInt(arr2[1]);
+    let total2 = newMin2 + newHr2 * 60;
+    let diff = total2- total1;
+    let hour = Math.floor(diff/60);
+    let min = diff%60;
+    let hourString = hour<10? '0' + hour: hour;
+    let minString = min<10? '0' + min: min;
+    return hourString + ':' + minString;
   }
  
   /**
    * calender body template to be rendered
    */
   contentBodyTemplate() {
+    console.log(this.timeDifference('11:50', '12:40'));
     const startDate = startOfWeek(this.currentMonth);
-    let filteredEvents = this.events.filter(eventItem => {
-      return isAfter(new Date(eventItem.start), startDate) && isBefore(new Date(eventItem.start), addDays(startDate,7));
+    let filteredEvents = this.events.filter(({...eventItem}) => {
+      return {...isAfter(new Date(eventItem.start), startDate) && isBefore(new Date(eventItem.start), addDays(startDate,7))};
     });
     filteredEvents = filteredEvents.map(eventItem=> {
       return {...eventItem, duration: this.timeDifference(eventItem.startTime, eventItem.endTime)}
@@ -176,6 +193,7 @@ export class AppCalendarWeekBody extends LitElement {
               .selectedDate="${this.selectedDate}"
               .formattedDate="${formattedDate}"
               .formattedHours="${formatHours}"
+              .currentMonth="${this.currentMonth}"
               .events="${filteredEvents}"
               ></app-calendar-week-cell>
             </div>
