@@ -116,6 +116,7 @@ export class AppCalendarWeekCell extends LitElement {
         // margin-top:2px;
         transform: translate(0, 0);
         position:absolute;
+        z-index: 10;
         // top:15px;
         font-size:12px;
       }
@@ -246,15 +247,26 @@ export class AppCalendarWeekCell extends LitElement {
    * function to get all the events to add drag and drop events listeners
    */
   updated() {
-    // this.cellStyles.borderTop = '1px solid var(--border-color);'
-    let draggableItems = this.shadowRoot.querySelectorAll('.event');
-    if(draggableItems.length!=0){
-      draggableItems.forEach(draggableItem => {
-        draggableItem.addEventListener('dragstart', (e)=>{ this.handleDragStart(e, draggableItem.getAttribute('key'))})
-      });
+    if(this.cellStyles.borderTop=="none"){
+      console.log(this.cellStyles)
     }
-    this.addEventListener('dragover', this.handleDragOver);
-    this.addEventListener('drop', this.handleDrop);
+    
+    // this.cellStyles.borderTop = '1px solid var(--border-color);'
+    // this.cellStyles = {...this.cellStyles}
+    // let draggableItems = this.shadowRoot.querySelectorAll('.event');
+    // if(draggableItems.length!=0){
+    //   draggableItems.forEach(draggableItem => {
+    //     draggableItem.addEventListener('dragstart', (e)=>{ this.handleDragStart(e, draggableItem.getAttribute('key'))})
+    //   });
+    // }
+    // this.addEventListener('dragover', this.handleDragOver);
+    // this.addEventListener('drop', this.handleDrop);
+  }
+
+  willUpdate() {
+    // console.log('her')
+    this.cellStyles.borderTop = '1px solid var(--border-color);'
+    // this.cellStyles = {...this.cellStyles }
   }
 
   /**
@@ -367,7 +379,7 @@ export class AppCalendarWeekCell extends LitElement {
         if(item.startTime>= this.formattedHours && item.startTime< this.addHours(this.formattedHours,1)){
           let styles = {}
           this.cellStyles.borderTop = '1px solid var(--border-color);'
-          console.log('main')
+          // console.log('main')
           if(item.duration == '01:00'){
             styles.borderRadius = '10px';
           }
@@ -377,21 +389,21 @@ export class AppCalendarWeekCell extends LitElement {
           allEvents.push(html `<div class="empty" style="${styleMap({
             height: this.calcPer(this.timeDiff(this.formattedHours, item.startTime)) + '%'
           })}"></div>`)
-          allEvents.push(html`<div class="event" style="${styleMap(styles)}"><span>${item.title}</span></div>`)
+          allEvents.push(html`<div class="event" style="${styleMap(styles)}" draggable="true"><span>${item.title}</span></div>`)
         }
         
         else if(item.startTime<= this.formattedHours && this.addTime(item.startTime, item.duration)> this.formattedHours) {
           let styles= {};
-          console.log('follow')
+          // console.log('follow')
           // console.log(this.addTime(item.startTime, item.duration));
-          console.log('bordoe non')
+          // console.log('bordoe non')
           this.cellStyles.borderTop = 'none'
           if(this.timeDiff(this.formattedHours,this.addTime(item.startTime, item.duration)) <= '01:00') {
             styles.borderRadius = '0px 0px 10px 10px';
             styles.height = this.calcPer(this.timeDiff(this.formattedHours,this.addTime(item.startTime, item.duration))) + '%';
             // console.log(item.title, this.timeDiff(this.addTime(item.startTime, item.duration), this.formattedHours))
           }
-          allEvents.push(html`<div class="event" style="${styleMap(styles)}"><span></span></div>`)
+          allEvents.push(html`<div class="event" style="${styleMap(styles)}" draggable="true"><span></span></div>`)
         }
         // if(count<2){
         //   allEvents.push(

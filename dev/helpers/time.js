@@ -15,4 +15,69 @@
   return time.join(''); // return adjusted time or original string
 }
 
-export {tConvert}
+timeDifference = function(a, b) {
+  let arr1 = a.split(':');
+  let newHr1 = parseInt(arr1[0]);
+  let arr2 = b.split(':');
+  let newHr2 = parseInt(arr2[0]);
+  return newHr2-newHr1;
+}
+
+addTime = function(a, b) {
+  let arr1 = a.split(':');
+  let newHr1 = parseInt(arr1[0]);
+  let newMin1 = parseInt(arr1[1]);
+  let total1 = newMin1 + newHr1 * 60;
+  let arr2 = b.split(':');
+  let newHr2 = parseInt(arr2[0]);
+  let newMin2 = parseInt(arr2[1]);
+  let total2 = newMin2 + newHr2 * 60;
+  let diff = total2 + total1;
+  let hour = Math.floor(diff/60);
+  let min = diff%60;
+  let hourString = hour<10? '0' + hour: hour;
+  let minString = min<10? '0' + min: min;
+  return hourString + ':' + minString;
+}
+addHours = function(time, addition) {
+  // let x = parseInt(time.substring(0,2));
+  let arr = time.split(':');
+  let newHr = parseInt(arr[0]);
+  newHr += addition;
+  let newStr = newHr<10? '0'+ newHr: newHr;
+  return newStr + ':' + arr[1];
+}
+
+timeDiff = function(a, b) {
+  // let arr1 = a.split(':');
+  // let newHr1 = parseInt(arr1[0]);
+  // let arr2 = b.split(':');
+  // let newHr2 = parseInt(arr2[0]);
+  // return newHr2-newHr1-1;
+  let arr1 = a.split(':');
+  let newHr1 = parseInt(arr1[0]);
+  let newMin1 = parseInt(arr1[1]);
+  let total1 = newMin1 + newHr1 * 60;
+  let arr2 = b.split(':');
+  let newHr2 = parseInt(arr2[0]);
+  let newMin2 = parseInt(arr2[1]);
+  let total2 = newMin2 + newHr2 * 60;
+  let diff = total2- total1;
+  let hour = Math.floor(diff/60);
+  let min = diff%60;
+  let hourString = hour<10? '0' + hour: hour;
+  let minString = min<10? '0' + min: min;
+  return hourString + ':' + minString;
+}
+
+calcPer = function(time) {
+  let arr1 = time.split(':');
+  let newHr1 = parseInt(arr1[0]);
+  let newMin1 = parseInt(arr1[1]);
+  let total1 = newMin1 + newHr1 * 60;
+  let per = (total1/60) *100;
+  return per;
+}
+
+
+export {tConvert, calcPer, timeDifference, addTime, addHours}

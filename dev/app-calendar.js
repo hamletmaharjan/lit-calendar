@@ -128,7 +128,7 @@ export class AppCalendar extends LitElement {
       {"id":5, "start":"2021-05-18","end":"2021-05-18","startTime":"09:00", "endTime":"12:00","title":"test"},
       {"id":6, "start":"2021-05-22","end":"2021-05-21","startTime":"03:00", "endTime":"05:00","title":"weekend program"},
       {"id":7, "start":"2021-05-29","end":"2021-05-39","startTime":"20:00", "endTime":"22:00","title":"Community binge marathon"},
-      {"id":8, "start":"2021-05-18","end":"2021-05-18","startTime":"05:45", "endTime":"07:30","title":"Team Meeting"},
+      {"id":8, "start":"2021-05-18","end":"2021-05-18","startTime":"05:15", "endTime":"07:30","title":"Team Meeting"},
       {"id":9, "start":"2021-05-17","end":"2021-05-17","startTime":"09:00", "endTime":"11:00","title":"some Meeting"}
     ];
 
