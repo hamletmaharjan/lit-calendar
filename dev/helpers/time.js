@@ -70,7 +70,7 @@ timeDiff = function(a, b) {
   return hourString + ':' + minString;
 }
 
-calcPer = function(time) {
+function calcPer(time) {
   let arr1 = time.split(':');
   let newHr1 = parseInt(arr1[0]);
   let newMin1 = parseInt(arr1[1]);

@@ -218,7 +218,7 @@ export class AppCalendarHeader extends LitElement {
           <div class="tab">
             <button class="tablinks ${this.view=='month'?'active':''}" @click="${()=> this.onChangeView('month')}">month</button>
             <button class="tablinks ${this.view=='week'?'active':''}" @click="${()=> this.onChangeView('week')}">week</button>
-            <button class="tablinks" >day</button>
+            <button class="tablinks ${this.view=='day'?'active':''}" @click="${()=>this.onChangeView('day')}">day</button>
           </div>
           <div class="icon"  @click="${this.onNextMonthClick}">chevron_right</div>
         </div>

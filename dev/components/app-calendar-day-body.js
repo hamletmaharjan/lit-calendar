@@ -3,7 +3,11 @@ import {LitElement, html, css} from 'lit';
 import {format, addDays,startOfWeek, 
         endOfWeek, startOfMonth, endOfMonth, isAfter, isBefore} from 'date-fns';
 
-import './app-calendar-week-cell';
+import { styleMap } from 'lit-html/directives/style-map';
+
+import './app-calendar-day-cell';
+import isSameDay from 'date-fns/isSameDay';
+// import {addHours} from '../helpers/time';
 // import {tConvert} from '../helpers/time';
 
 
@@ -17,7 +21,7 @@ import './app-calendar-week-cell';
  * @litElement
  * @customElement
  */
-export class AppCalendarWeekBody extends LitElement {
+export class AppCalendarDayBody extends LitElement {
 
   /**
    * Static getter styles
@@ -37,7 +41,7 @@ export class AppCalendarWeekBody extends LitElement {
           line-height: 1.5;
           color: var(--text-color);
           background: var(--bg-color);
-          position: relative;
+          // position: relative;
       }
       
       /* GRID */
@@ -50,33 +54,66 @@ export class AppCalendarWeekBody extends LitElement {
         width: 100%;
       }
       .body {
-        position:relative;
+        // position:relative;
       }
       .body .row {
-        // border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
       }
       
       .body .row:last-child {
         border-bottom: none;
       }
       
-      .col {
-        flex-grow: 1;
-        flex-basis: 0;
-        max-width: 100%;
-      }
+    
       
       /* Calendar */
-      .body .col {
+      .body .col:first-child {
         flex-grow: 0;
-        flex-basis: calc(100%/8);
-        width: calc(100%/8);
+        flex-basis: calc(20%);
+        width: calc(100%/7);
         border-right: 1px solid var(--border-color);
 
+      }
+      .body .col {
+        flex-grow: 0;
+        flex-basis: calc(80%);
+        width: calc(100%/2);
+        border-right: 1px solid var(--border-color);
+        position:relative;
       }
       .hours {
         text-align:center;
         padding:2px;
+      }
+      .event {
+        background:#039dfc;
+        color:white;
+        width:100%;
+        height:100%;
+        margin:0 auto;
+        padding:0px 10px 0px 5px;
+        border-radius:10px;
+        // margin-top:2px;
+        // transform: translate(0, 0);
+        position:absolute;
+        z-index: 10;
+        top:10%;
+        font-size:12px;
+      }
+      .event:hover{
+        cursor:pointer;
+      }
+      .event-body{
+        height: 95%;
+        // background-color:red;
+      }
+      .resizer {
+        height:5%;
+        // background-color:green;
+        cursor: s-resize;
+      }
+      .resizer:hover{
+        cursor:s-resize;
       }
     `
   ];
@@ -122,10 +159,16 @@ export class AppCalendarWeekBody extends LitElement {
        * handler function when user adds event
        * @type {{onAddEvent:Function}}
        */
-      onAddEvent: {type: Function}
+      onAddEvent: {type: Function},
+
+      eventStyle: {type: Object}
     };
   }
 
+  constructor() {
+    super();
+    this.eventStyle = {height: '100%', top: '0%'};
+  }
   tConvert(time) {
     // Check correct time format and split into components
     time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
@@ -159,6 +202,42 @@ export class AppCalendarWeekBody extends LitElement {
     let minString = min<10? '0' + min: min;
     return hourString + ':' + minString;
   }
+
+  addHours(time, addition) {
+    // let x = parseInt(time.substring(0,2));
+    let arr = time.split(':');
+    let newHr = parseInt(arr[0]);
+    newHr += addition;
+    let newStr = newHr<10? '0'+ newHr: newHr;
+    return newStr + ':' + arr[1];
+  }
+
+  calcPer(time) {
+    let arr1 = time.split(':');
+    let newHr1 = parseInt(arr1[0]);
+    let newMin1 = parseInt(arr1[1]);
+    let total1 = newMin1 + newHr1 * 60;
+    let per = (total1/60) *100;
+    return per;
+  }
+
+  renderEvents(filteredEvents, formattedHours) {
+    let events = [];
+    filteredEvents.forEach(item => {
+      if(item.startTime >= formattedHours && item.startTime < this.addHours(formattedHours,1)){
+        this.eventStyle.height = this.calcPer(item.duration) + '%';
+        this.eventStyle.top = this.calcPer(this.timeDifference(formattedHours, item.startTime)) + '%'
+        console.log(this.eventStyle)
+        events.push(html`
+          <div class="event" style="${styleMap(this.eventStyle)}" draggable="true">
+            <div class="event-body">${item.title}</div>
+            <div class="resizer"></div>
+          </div>
+        `)
+      }
+    });
+    return events;
+  }
  
   /**
    * calender body template to be rendered
@@ -167,11 +246,12 @@ export class AppCalendarWeekBody extends LitElement {
     console.log(this.timeDifference('11:50', '12:40'));
     const startDate = startOfWeek(this.currentMonth);
     let filteredEvents = this.events.filter(({...eventItem}) => {
-      return isAfter(new Date(eventItem.start), startDate) && isBefore(new Date(eventItem.start), addDays(startDate,7));
+      return isSameDay(new Date(eventItem.start), this.currentMonth);
     });
     filteredEvents = filteredEvents.map(eventItem=> {
       return {...eventItem, duration: this.timeDifference(eventItem.startTime, eventItem.endTime)}
     });
+    console.log(filteredEvents)
     const dateFormat = "d";
     const rows = [];
     let days = [];
@@ -181,26 +261,13 @@ export class AppCalendarWeekBody extends LitElement {
     let hours = 0;
     while (hours < 24) {
       formatHours = hours<10? '0'+hours+':00':hours + ':00';
-      days.push(html`<div class="col"><div class="hours">${this.tConvert(formatHours)} ${hours}</div></div>`)
-      for (let i = 0; i < 7; i++) {
-        day = addDays(startDate, i);
-        formattedDate = format(day, dateFormat);
-        days.push(
-          html`
-            <div class="col">
-              <app-calendar-week-cell 
-              .day="${day}"
-              .selectedDate="${this.selectedDate}"
-              .formattedDate="${formattedDate}"
-              .formattedHours="${formatHours}"
-              .currentMonth="${this.currentMonth}"
-              .events="${filteredEvents}"
-              ></app-calendar-week-cell>
-            </div>
-          `
-        );
-        day = addDays(day, 1);
-      }
+      days.push(html`
+      <div class="col"><div class="hours">${this.tConvert(formatHours)}</div></div>
+      <div class="col">
+        ${this.renderEvents(filteredEvents, formatHours)}
+      </div>
+      `)
+      
       rows.push(
         html`
         <div class="row" key=${day}>
@@ -230,5 +297,5 @@ export class AppCalendarWeekBody extends LitElement {
 
 }
 
-window.customElements.define('app-calendar-week-body', AppCalendarWeekBody);
+window.customElements.define('app-calendar-day-body', AppCalendarDayBody);
  

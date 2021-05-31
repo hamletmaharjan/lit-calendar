@@ -1,6 +1,6 @@
 import {LitElement, html, css, nothing} from 'lit';
 
-import {addMonths, subMonths, isAfter, isBefore, isSameDay, formatISO, subWeeks, addWeeks} from 'date-fns';
+import {addMonths, subMonths, isAfter, isBefore, isSameDay, formatISO, subWeeks, addWeeks,addDays, subDays} from 'date-fns';
 
 import './components/app-menu';
 import './components/app-add-event';
@@ -11,6 +11,8 @@ import './components/app-calendar-content.js';
 import './components/app-calendar-content-header.js';
 
 import './components/app-calendar-content-week';
+import './components/app-calendar-content-day';
+// import addDays from 'date-fns/addDays';
 
 
 /**
@@ -129,7 +131,7 @@ export class AppCalendar extends LitElement {
       {"id":6, "start":"2021-05-22","end":"2021-05-21","startTime":"03:00", "endTime":"05:00","title":"weekend program"},
       {"id":7, "start":"2021-05-29","end":"2021-05-39","startTime":"20:00", "endTime":"22:00","title":"Community binge marathon"},
       {"id":8, "start":"2021-05-18","end":"2021-05-18","startTime":"05:15", "endTime":"07:30","title":"Team Meeting"},
-      {"id":9, "start":"2021-05-17","end":"2021-05-17","startTime":"09:00", "endTime":"11:00","title":"some Meeting"}
+      {"id":9, "start":"2021-05-31","end":"2021-05-17","startTime":"09:30", "endTime":"11:30","title":"some Meeting"}
     ];
 
     this.nextMonth = this.nextMonth.bind(this);
@@ -182,12 +184,25 @@ export class AppCalendar extends LitElement {
    * handler function when use click the next icon to add current day by a month
    */
   nextMonth() {
-    if(this.view=='week') {
-      this.currentMonth = addWeeks(this.currentMonth,1);
+    switch(this.view) {
+      case 'week':
+        this.currentMonth = addWeeks(this.currentMonth, 1);
+        break;
+      case 'month':
+        this.currentMonth = addMonths(this.currentMonth, 1);
+        break;
+      case 'day':
+        this.currentMonth = addDays(this.currentMonth, 1);
+        break;
+      default:
+        console.log('invalid');
     }
-    else{
-      this.currentMonth = addMonths(this.currentMonth, 1);
-    }
+    // if(this.view=='week') {
+    //   this.currentMonth = addWeeks(this.currentMonth,1);
+    // }
+    // else{
+    //   this.currentMonth = addMonths(this.currentMonth, 1);
+    // }
     
   }
 
@@ -195,12 +210,25 @@ export class AppCalendar extends LitElement {
    * handler function when use click the next icon to subtract current day by a month
    */
   prevMonth() {
-    if(this.view=='week') {
-      this.currentMonth = subWeeks(this.currentMonth,1);
+    switch(this.view) {
+      case 'week':
+        this.currentMonth = subWeeks(this.currentMonth, 1);
+        break;
+      case 'month':
+        this.currentMonth = subMonths(this.currentMonth, 1);
+        break;
+      case 'day':
+        this.currentMonth = subDays(this.currentMonth, 1);
+        break;
+      default:
+        console.log('invalid');
     }
-    else{
-      this.currentMonth = subMonths(this.currentMonth, 1);
-    }
+    // if(this.view=='week') {
+    //   this.currentMonth = subWeeks(this.currentMonth,1);
+    // }
+    // else{
+    //   this.currentMonth = subMonths(this.currentMonth, 1);
+    // }
    
   }
 
@@ -315,8 +343,19 @@ export class AppCalendar extends LitElement {
           .onEventChange="${this.handleChangeEvent}"
           .onAddEvent="${this.handleAddEvent}"
           .view="${this.view}"
-        >
-        </app-calendar-content-week>
+        ></app-calendar-content-week>
+
+        <app-calendar-content-day
+          .currentDate="${this.currentMonth}"
+          .currentMonth="${this.currentMonth}"
+          .selectedDate="${this.selectedDate}"
+          .events="${this.events}" 
+          .onMoreMenuClick="${this.handleShowAppMenu}"
+          .onEventChange="${this.handleChangeEvent}"
+          .onAddEvent="${this.handleAddEvent}"
+          .view="${this.view}"
+        ></app-calendar-content-day>
+
         <app-menu 
         .onCancel="${this.handleCancel}" 
         .items="${this.events}" 
