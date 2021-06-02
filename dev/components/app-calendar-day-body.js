@@ -167,7 +167,10 @@ export class AppCalendarDayBody extends LitElement {
 
   constructor() {
     super();
+
     this.eventStyle = {height: '100%', top: '0%'};
+
+    this.handleAddEvent = this.handleAddEvent.bind(this);
   }
   tConvert(time) {
     // Check correct time format and split into components
@@ -221,15 +224,22 @@ export class AppCalendarDayBody extends LitElement {
     return per;
   }
 
+  handleAddEvent(event) {
+    console.log('dblcl');
+    this.onAddEvent(this.currentMonth);
+  }
+
   renderEvents(filteredEvents, formattedHours) {
     let events = [];
+    let myStyle = {};
     filteredEvents.forEach(item => {
       if(item.startTime >= formattedHours && item.startTime < this.addHours(formattedHours,1)){
-        this.eventStyle.height = this.calcPer(item.duration) + '%';
-        this.eventStyle.top = this.calcPer(this.timeDifference(formattedHours, item.startTime)) + '%'
-        console.log(this.eventStyle)
+
+        myStyle.height = this.calcPer(item.duration) + '%';
+        myStyle.top = this.calcPer(this.timeDifference(formattedHours, item.startTime)) + '%'
+        console.log(myStyle)
         events.push(html`
-          <div class="event" style="${styleMap(this.eventStyle)}" draggable="true">
+          <div class="event" style="${styleMap(myStyle)}" draggable="true">
             <div class="event-body">${item.title}</div>
             <div class="resizer"></div>
           </div>
@@ -270,7 +280,7 @@ export class AppCalendarDayBody extends LitElement {
       
       rows.push(
         html`
-        <div class="row" key=${day}>
+        <div class="row" @dblclick="${this.handleAddEvent}">
           ${days}
         </div>
         `

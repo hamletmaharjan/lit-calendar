@@ -217,6 +217,8 @@ export class AppCalendarWeekCell extends LitElement {
     this.showAppMenu = false;
     this.cellStyles = {}
     this.cellStyles.borderTop = '1px solid var(--border-color);'
+
+    this.handleAddEvent = this.handleAddEvent.bind(this);
   }
 
   /**
@@ -225,9 +227,11 @@ export class AppCalendarWeekCell extends LitElement {
   connectedCallback() {
     super.connectedCallback();
 
-    // this.shadowRoot.addEventListener('dblclick', (event)=> {
-    //   this.onAddEvent(this.day);
-    // });
+    this.shadowRoot.addEventListener('dblclick', this.handleAddEvent);
+  }
+
+  handleAddEvent(event) {
+    this.onAddEvent(this.day);
   }
 
   /**
@@ -268,6 +272,13 @@ export class AppCalendarWeekCell extends LitElement {
     this.cellStyles.borderTop = '1px solid var(--border-color);'
     // this.cellStyles = {...this.cellStyles }
   }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+
+    this.shadowRoot.removeEventListener('dblclick', this.handleAddEvent);
+  }
+
 
   /**
    * handler function for drag over event

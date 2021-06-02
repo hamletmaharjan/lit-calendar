@@ -195,6 +195,7 @@ export class AppCalendarWeekBody extends LitElement {
               .formattedHours="${formatHours}"
               .currentMonth="${this.currentMonth}"
               .events="${filteredEvents}"
+              .onAddEvent="${this.onAddEvent}"
               ></app-calendar-week-cell>
             </div>
           `
