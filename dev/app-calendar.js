@@ -131,7 +131,7 @@ export class AppCalendar extends LitElement {
       {"id":6, "start":"2021-05-22","end":"2021-05-21","startTime":"03:00", "endTime":"05:00","title":"weekend program"},
       {"id":7, "start":"2021-05-29","end":"2021-05-39","startTime":"20:00", "endTime":"22:00","title":"Community binge marathon"},
       {"id":8, "start":"2021-05-18","end":"2021-05-18","startTime":"05:15", "endTime":"07:30","title":"Team Meeting"},
-      {"id":9, "start":"2021-05-31","end":"2021-05-17","startTime":"09:30", "endTime":"11:30","title":"some Meeting"}
+      {"id":9, "start":"2021-06-03","end":"2021-05-17","startTime":"09:15", "endTime":"12:30","title":"some Meeting"}
     ];
 
     this.nextMonth = this.nextMonth.bind(this);
@@ -258,11 +258,16 @@ export class AppCalendar extends LitElement {
    * @param {Integer} id - id of the event
    * @param {String} start - new start date of the event
    */
-  handleChangeEvent(id,start) {
+  handleChangeEvent(id,start, time) {
+    // console.log(startTime)
     if(this.events.length!=0){
       this.events = this.events.map((item) => {
         if(item['id'] == id) {
           item.start = start;
+          if(time){
+            item.startTime = time.startTime;
+            item.endTime = time.endTime;
+          }
         } 
         return {...item}
       });

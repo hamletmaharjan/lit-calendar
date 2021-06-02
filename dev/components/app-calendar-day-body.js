@@ -38,7 +38,7 @@ export class AppCalendarDayBody extends LitElement {
           font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
           font-size: 1em;
           font-weight: 300;
-          line-height: 1.5;
+          // line-height: 20px;
           color: var(--text-color);
           background: var(--bg-color);
           // position: relative;
@@ -52,6 +52,7 @@ export class AppCalendarDayBody extends LitElement {
         flex-direction: row;
         flex-wrap: wrap;
         width: 100%;
+        height:25px;
       }
       .body {
         // position:relative;
@@ -171,7 +172,65 @@ export class AppCalendarDayBody extends LitElement {
     this.eventStyle = {height: '100%', top: '0%'};
 
     this.handleAddEvent = this.handleAddEvent.bind(this);
+    this.handleDrop = this.handleDrop.bind(this);
   }
+
+  firstUpdated() {
+    let droppableItems = this.shadowRoot.querySelectorAll('.row');
+    if(droppableItems.length!=0){
+      droppableItems.forEach(droppableItem => {
+        droppableItem.addEventListener('drop', this.handleDrop);
+        droppableItem.addEventListener('dragover', this.handleDragOver)
+      });
+    }
+  }
+
+  updated() {
+    // console.log('here')
+    let draggableItems = this.shadowRoot.querySelectorAll('.event');
+    console.log('items',draggableItems)
+    if(draggableItems.length!=0){
+      draggableItems.forEach(draggableItem => {
+        draggableItem.addEventListener('dragstart', (e)=>{ this.handleDragStart(e, draggableItem.getAttribute('key'))})
+      });
+    }
+  }
+
+  handleDragOver(e) {
+    e.preventDefault(); // Necessary. Allows us to drop.
+  }
+
+  /**
+   * handler function for handling drop
+   * @param {Object} e 
+   */
+  handleDrop(e) {
+    // console.log(e.target.getAttribute('key'));
+    // console.log(this)
+    e.dataTransfer.effectAllowed = "move";
+    let id = e.dataTransfer.getData('text/plain');
+    let startTime = e.target.getAttribute('key');
+    let selectedItem = this.events.find(eventItem => eventItem.id == id);
+    console.log(selectedItem)
+    let dur = this.timeDifference(selectedItem.startTime, selectedItem.endTime);
+    let endTime = this.addTime(startTime, dur);
+
+    console.log('heeee',startTime, endTime)
+    let time = {startTime: startTime, endTime: endTime };
+    this.onEventChange(id, this.currentMonth, time);
+  }
+
+  /**
+   * 
+   * @param {Object} e 
+   * @param {Integer} key - key that represents id of event
+   */
+  handleDragStart(e, key) {
+    console.log('drag')
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData("text/plain", key);
+  }
+
   tConvert(time) {
     // Check correct time format and split into components
     time = time.toString().match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
@@ -220,8 +279,26 @@ export class AppCalendarDayBody extends LitElement {
     let newHr1 = parseInt(arr1[0]);
     let newMin1 = parseInt(arr1[1]);
     let total1 = newMin1 + newHr1 * 60;
-    let per = (total1/60) *100;
+    // let per = (total1/60) *100;
+    let per = (total1/60) * 25;
     return per;
+  }
+
+  addTime(a, b) {
+    let arr1 = a.split(':');
+    let newHr1 = parseInt(arr1[0]);
+    let newMin1 = parseInt(arr1[1]);
+    let total1 = newMin1 + newHr1 * 60;
+    let arr2 = b.split(':');
+    let newHr2 = parseInt(arr2[0]);
+    let newMin2 = parseInt(arr2[1]);
+    let total2 = newMin2 + newHr2 * 60;
+    let diff = total2 + total1;
+    let hour = Math.floor(diff/60);
+    let min = diff%60;
+    let hourString = hour<10? '0' + hour: hour;
+    let minString = min<10? '0' + min: min;
+    return hourString + ':' + minString;
   }
 
   handleAddEvent(event) {
@@ -235,11 +312,11 @@ export class AppCalendarDayBody extends LitElement {
     filteredEvents.forEach(item => {
       if(item.startTime >= formattedHours && item.startTime < this.addHours(formattedHours,1)){
 
-        myStyle.height = this.calcPer(item.duration) + '%';
-        myStyle.top = this.calcPer(this.timeDifference(formattedHours, item.startTime)) + '%'
+        myStyle.height = this.calcPer(item.duration) + 'px';
+        myStyle.top = this.calcPer(this.timeDifference(formattedHours, item.startTime)) + 'px'
         console.log(myStyle)
         events.push(html`
-          <div class="event" style="${styleMap(myStyle)}" draggable="true">
+          <div class="event" style="${styleMap(myStyle)}" draggable="true" key="${item.id}" duration="${item.duration}">
             <div class="event-body">${item.title}</div>
             <div class="resizer"></div>
           </div>
@@ -273,14 +350,14 @@ export class AppCalendarDayBody extends LitElement {
       formatHours = hours<10? '0'+hours+':00':hours + ':00';
       days.push(html`
       <div class="col"><div class="hours">${this.tConvert(formatHours)}</div></div>
-      <div class="col">
+      <div class="col" key="${formatHours}">
         ${this.renderEvents(filteredEvents, formatHours)}
       </div>
       `)
       
       rows.push(
         html`
-        <div class="row" @dblclick="${this.handleAddEvent}">
+        <div class="row" @dblclick="${this.handleAddEvent}" key="${formatHours}">
           ${days}
         </div>
         `
